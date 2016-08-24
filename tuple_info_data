@@ -20,6 +20,7 @@ Software release: CMSSW_5_3_32
 This file contains the jet candidates in flat tuple format derived from the full 2011 RunA Jet primary dataset. The collection was filtered with the list of the validated runs. Additionally, jet candidates with $p_T < 15 GeV$ and $|\eta| > 5$ were discarded. These datasets were produced with the code in:
 
 Software to preprocess the CMS 2011 Jet dataset for the jet inclusive cross section analysis example of CMS open data
+\url{https://github.com/cms-opendata-validation/2011-jet-inclusivecrosssection-ntupleproduction}
 
 
 *How were these data validated?
@@ -30,6 +31,7 @@ CMS list of validated runs for primary datasets of 2011 data taking
 *How can you use these data?
 The data can be further analysed with the analysis example code available in
 the jet inclusive cross section analysis example of CMS 2011 open data
+ \url{https://github.com/cms-opendata-validation/2011-jet-inclusivecrosssection-analysis}
 
-Issues & Limitations
+*Issues & Limitations
 The file contains only jet collections, other physics object collections have been discarded. 

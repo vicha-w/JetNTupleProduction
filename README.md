@@ -1,6 +1,8 @@
-# 2011-jet-inclusivecrosssection-ntupleproduction
+# CMS Jet Tuple production 2011
 
-Validation code for 2011 jet dataset, based on inclusive jet cross section - step 1: ntuple production
+
+
+This project is a CMSSW module producing flat tuples from 2011A Jet data.
 
 Source code was originally forked from the SMPJ Analysis Framework: 
 https://twiki.cern.ch/twiki/bin/viewauth/CMS/SMPJAnalysisFW  
@@ -72,11 +74,13 @@ After running the code, you can browse the tuples by opening the produced files 
 ```
  
 Finally, run this command in the ROOT command prompt:
-```Matias
+
+```
     TBrowser t
 ```
  
-
+## Tuple files
+More info about the data and Monte Carlo tuples can be found in files ```tuple_info_data``` and  ```tuple_info_mc```.
 
 ## Tuple variables
 
