@@ -1,0 +1,35 @@
+The tuples can be found on the CERN AFS:
+/afs/cern.ch/user/m/mhaapale/work/public/Jet-Tuples-Summer2016/data/OpenDataTuple-Data-Jet-Run2011A.root
+
+*********************************************************************************************************
+* Description
+Jets in flat tuple format derived from /Jet/Run2011A-12Oct2013-v1/AOD primary dataset.
+
+Accelerator:CERN-LHC 
+Experiment: CMS 
+Parent Dataset: /Jet/Run2011A-12Oct2013-v1/AOD
+Preprocessed data for the jet analysis example
+
+*Characteristics 
+Dataset: 25607902 events 1 file 7.8G GB in total
+
+*System Details 
+Software release: CMSSW_5_3_32
+
+*How were these data selected?
+This file contains the jet candidates in flat tuple format derived from the full 2011 RunA Jet primary dataset. The collection was filtered with the list of the validated runs. Additionally, jet candidates with $p_T < 15 GeV$ and $|\eta| > 5$ were discarded. These datasets were produced with the code in:
+
+Software to preprocess the CMS 2011 Jet dataset for the jet inclusive cross section analysis example of CMS open data
+
+
+*How were these data validated?
+Only the list of validated runs have been accepted.
+
+CMS list of validated runs for primary datasets of 2011 data taking
+
+*How can you use these data?
+The data can be further analysed with the analysis example code available in
+the jet inclusive cross section analysis example of CMS 2011 open data
+
+Issues & Limitations
+The file contains only jet collections, other physics object collections have been discarded. 

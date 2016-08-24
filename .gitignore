@@ -1,6 +1,6 @@
 AnalysisFW/python/crab_projects*/
 crab.log
-**/LSFJOB*
+LSFJOB_*/
 *.root
 *.pyc
 __init__.py

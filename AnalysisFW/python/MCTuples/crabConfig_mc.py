@@ -8,11 +8,14 @@ Run the following commands from the parent directory:
 
 1. Submit CRAB3 jobs
     cmsenv && source /cvmfs/cms.cern.ch/crab3/crab.sh && python MCTuples/crabConfig_mc.py
-If the jobs crash (error 8002), try checking that in the CMSSW config 'runOnVM' is False!
+If the jobs crash (error 8002), in the CMSSW config try changing 'runOnVM' to False!
 
 2. Merge the tuples of each sample: get one file per pthat interval
     bsub -q 1nh -J job1 < MCTuples/mergeMCTuples.sh
+    
 3. Create the final Monte Carlo tuple file
+This script requires the files 'mergeMC.C' and 'mergeMC.h' 
+in the same directory as the files produced in the previous step. 
 (the ROOT script does the merging, while also computing: weight = cross-section / num of events):
     bsub -q 1nh -J job1 < MCTuples/createMCTuple.sh 
 
@@ -25,7 +28,7 @@ config = config()
 
 # Global CRAB3 settings
 config.General.requestName = 'OpenDataTree_all'
-config.General.workArea = 'crab_projects_retry'
+config.General.workArea = 'crab_projects_allMC'
 config.General.transferOutputs = True
 config.General.transferLogs = True
 
@@ -37,10 +40,12 @@ config.Data.splitting = 'EventAwareLumiBased' #'FileBased'
 config.Data.outLFNDirBase = '/store/group/phys_smp/mhaapale/'
 config.Data.publication = False
 
-config.Data.totalUnits = 1000000    # appr. number of events
+#config.Data.totalUnits = 1000000    # appr. number of events
 config.Data.unitsPerJob = 40000     # appr. events per job
 
 config.Site.storageSite = 'T2_CH_CERN'
+config.Site.blacklist = ['T2_CN_Beijing']
+config.Data.ignoreLocality = True
 
 
 # The following chunk was taken from:

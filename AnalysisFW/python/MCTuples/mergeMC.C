@@ -10,7 +10,7 @@ void mergeMC::Loop()
     if (fChain == 0) return;
 
     // Final tuple file
-    TFile *newfile = new TFile("MC_tuples.root","RECREATE");
+    TFile *newfile = new TFile("tuples_MC.root","RECREATE");
     
     // Subdirectory
     TDirectory *ydir = newfile->mkdir("ak5ak7");

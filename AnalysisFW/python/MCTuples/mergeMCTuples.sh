@@ -25,7 +25,7 @@ mkdir -p $OUTDIR
 # Input directories and files
 DIRS="QCD_Pt-*to*_TuneZ2_7TeV_pythia6/"
 REGEX="QCD_Pt-([[:digit:]]+to[[:digit:]]+)_TuneZ2_7TeV_pythia6/"
-DATE="160728"
+DATE="160823"
 PREFIX="OpenDataTree_mc_"
 
 # Loop over directories

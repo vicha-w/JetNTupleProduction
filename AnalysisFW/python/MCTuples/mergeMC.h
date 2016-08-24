@@ -21,10 +21,10 @@ public :
    Int_t           fCurrent; //!current Tree number in a TChain
 
    // Max number of jets in an event (HARD-CODED!)
-   static const UInt_t    maxNjet = 50;
+   static const UInt_t    maxNjet = 64;
 
    // Max number of triggers (HARD-CODED!)
-   static const UInt_t    maxNtrg = 15;
+   static const UInt_t    maxNtrg = 64;
 
    // Declaration of leaf types
    UInt_t          njet;

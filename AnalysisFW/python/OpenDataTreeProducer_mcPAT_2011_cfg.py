@@ -12,8 +12,8 @@ process.load('Configuration.StandardSequences.Services_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
 # True : when running in OpenData virtual machine
-# False: when runing in lxplus 
-runOnVM = True
+# False: when runing in lxplus and CRAB3
+runOnVM = False
 
 # Local input
 fileList = FileUtils.loadListFromFile('CMS_MonteCarlo2011_Summer11LegDR_QCD_Pt-80to120_TuneZ2_7TeV_pythia6_AODSIM_PU_S13_START53_LV6-v1_00000_file_index.txt')
@@ -156,9 +156,9 @@ process.p = cms.Path(
 # MC:   50000 events / 5 hours
 
 # Change number of events here:
-process.maxEvents.input = 100
+process.maxEvents.input = 10
 
-process.MessageLogger.cerr.FwkReport.reportEvery = 5
+process.MessageLogger.cerr.FwkReport.reportEvery = 1
 
 # Output file
 process.TFileService = cms.Service("TFileService", fileName = cms.string('OpenDataTree_mc.root'))
