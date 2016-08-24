@@ -72,8 +72,7 @@ After running the code, you can browse the tuples by opening the produced files 
 ```
  
 Finally, run this command in the ROOT command prompt:
-
-```
+```Matias
     TBrowser t
 ```
  
