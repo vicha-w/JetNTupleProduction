@@ -12,7 +12,15 @@ The instruction assume that you will work on a VM properly contextualized for CM
 
 ## Creating the working area
 
-This step is only needed the first time you run this program:
+First setup your own git configuration, or alternatively use these dummy values (required by the command ```git cms-addpkg```): 
+```
+git config --global user.name 'Your Name'
+git config --global user.email 'your@ema.il'
+git config --global user.github 'username'
+
+```
+
+Next create the working area:
 ```
 mkdir WorkingArea
 cd ./WorkingArea
