@@ -1,5 +1,5 @@
 # Hi there
-This GitHub repo is forked from the official CMS 2011 OpenData Validation by @katilp et al, and will be further modified for my bachelor's thesis. This README.md is not final yet, so stay tuned for changes.
+This GitHub repo is forked from the official CMS 2011 OpenData Validation by @tamshai et al, and will be further modified for my bachelor's thesis. This README.md is not final yet, so stay tuned for changes.
 
 The following text is taken directly from the forked repo.
 
