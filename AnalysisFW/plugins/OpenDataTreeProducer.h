@@ -147,6 +147,7 @@ class OpenDataTreeProducer : public edm::EDAnalyzer
     Float_t muon_pt[kMaxNmu];
     Float_t muon_eta[kMaxNmu];
     Float_t muon_phi[kMaxNmu];
+    Float_t muon_E[kMaxNmu];
     Float_t muon_charge[kMaxNmu];
 
     // Electrons
@@ -154,6 +155,7 @@ class OpenDataTreeProducer : public edm::EDAnalyzer
     Float_t electron_pt[kMaxNele];
     Float_t electron_eta[kMaxNele];
     Float_t electron_phi[kMaxNele];
+    Float_t electron_E[kMaxNele];
     Float_t electron_charge[kMaxNele];
 };
 
