@@ -73,19 +73,21 @@ OpenDataTreeProducer::OpenDataTreeProducer(edm::ParameterSet const &cfg) {
 
 
 void OpenDataTreeProducer::beginJob() {
-    mTree = fs->make< TTree >("OpenDataTree", "OpenDataTree");
+    mTree = fs->make<TTree>("OpenDataTree", "OpenDataTree");
 
     // Variables of the flat tuple
     mTree->Branch("njet", &njet, "njet/i");
     mTree->Branch("jet_pt", jet_pt, "jet_pt[njet]/F");
     mTree->Branch("jet_eta", jet_eta, "jet_eta[njet]/F");
     mTree->Branch("jet_phi", jet_phi, "jet_phi[njet]/F");
+    mTree->Branch("jet_btag", jet_btag, "jet_btag[njet]/F")
     mTree->Branch("jet_E", jet_E, "jet_E[njet]/F");   
     mTree->Branch("jet_tightID", jet_tightID, "jet_tightID[njet]/O");
     mTree->Branch("jet_area", jet_area, "jet_area[njet]/F");
     mTree->Branch("jet_jes", jet_jes, "jet_jes[njet]/F");
     mTree->Branch("jet_igen", jet_igen, "jet_igen[njet]/I");
 
+/*
     // AK7 variables
     mTree->Branch("njet_ak7", &njet_ak7, "njet_ak7/i");
     mTree->Branch("jet_pt_ak7", jet_pt_ak7, "jet_pt_ak7[njet_ak7]/F");
@@ -131,7 +133,14 @@ void OpenDataTreeProducer::beginJob() {
     mTree->Branch("mum", mum, "mum[njet]/i");
     mTree->Branch("beta", beta, "beta[njet]/F");   
     mTree->Branch("bstar", bstar, "bstar[njet]/F");
-    
+*/
+
+    // Lepton variables
+    mTree->Branch("nlep", &nlep, "nlep/i");
+    mTree->Branch("lep_pt", lep_pt, "lep_pt[nlep]/F");
+    mTree->Branch("lep_eta", lep_eta, "lep_eta[nlep]/F");
+    mTree->Branch("lep_phi", lep_phi, "lep_phi[nlep]/F");
+    mTree->Branch("lep_charge", lep_charge, "lep_charge[nlep]/F");
 }
 
 void OpenDataTreeProducer::endJob() {
@@ -284,7 +293,8 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     event_obj.getByLabel(mOfflineVertices, recVtxs);
 
     // Iterate over the jets of the event
-    for (auto i_ak5jet = patjets.begin(); i_ak5jet != patjets.end(); ++i_ak5jet) {
+    for (auto i_ak5jet = patjets.begin(); i_ak5jet != patjets.end(); ++i_ak5jet) 
+    {
 
         // Skip the current iteration if jet is not selected
         if (!i_ak5jet->isPFJet() || 
@@ -342,7 +352,6 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
             bstar[ak5_index]  = sumTrkPtBetaStar/sumTrkPt;
         } 
 
-
         // Jet composition
         chf[ak5_index]     = i_ak5jet->chargedHadronEnergyFraction();
         nhf[ak5_index]     = i_ak5jet->neutralHadronEnergyFraction() + i_ak5jet->HFHadronEnergyFraction();
@@ -358,7 +367,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         phm[ak5_index]     = i_ak5jet->photonMultiplicity();
         elm[ak5_index]     = i_ak5jet->electronMultiplicity();
         mum[ak5_index]     = i_ak5jet->muonMultiplicity();
-        
+
         int npr      = i_ak5jet->chargedMultiplicity() + i_ak5jet->neutralMultiplicity();
 
         bool isHighEta = fabs(i_ak5jet->eta()) > 2.4;
@@ -407,7 +416,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         }
         
     ak5_index++;
-    }  
+    }
     // Number of selected jets in the event
     njet = ak5_index;    
 
@@ -464,8 +473,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     ak7_index++;
     }  
     // Number of saved jets in the event
-    njet_ak7 = ak7_index;    
-
+    njet_ak7 = ak7_index;
 
     // MET
     Handle< PFMETCollection > met_handle;
