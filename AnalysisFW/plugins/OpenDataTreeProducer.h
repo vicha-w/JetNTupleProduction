@@ -142,6 +142,7 @@ class OpenDataTreeProducer : public edm::EDAnalyzer
     Float_t mcweight;
 
     // Leptons 
+    UInt_t nlep;
     Float_t lep_pt[kMaxNlep];
     Float_t lep_eta[kMaxNlep];
     Float_t lep_phi[kMaxNlep];
