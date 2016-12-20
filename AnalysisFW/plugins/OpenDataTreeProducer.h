@@ -87,6 +87,8 @@ class OpenDataTreeProducer : public edm::EDAnalyzer
     Float_t jet_jes[kMaxNjet];
     Int_t jet_igen[kMaxNjet];
 
+    Float_t jet_btag[kMaxNjet];
+
     // PF jets
     UInt_t njet_ak7;
     Float_t jet_pt_ak7[kMaxNjet];
