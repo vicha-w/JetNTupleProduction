@@ -48,7 +48,7 @@ class OpenDataTreeProducer : public edm::EDAnalyzer
     int             mGoodVtxNdof;
     double          mGoodVtxZ; 
     edm::InputTag   mPFak5JetsName;
-    edm::InputTag   mPFak7JetsName;
+    // edm::InputTag   mPFak7JetsName;
 
     
     // ---- PF Jet input tags ----- //
@@ -73,6 +73,7 @@ class OpenDataTreeProducer : public edm::EDAnalyzer
     
     static const UInt_t kMaxNjet = 64;
     static const UInt_t kMaxNtrg = 32;
+    static const UInt_t kMaxNlep = 64;
 
     // PF jets
     UInt_t njet;
@@ -140,6 +141,11 @@ class OpenDataTreeProducer : public edm::EDAnalyzer
     Float_t pthat;
     Float_t mcweight;
 
+    // Leptons 
+    Float_t lep_pt[kMaxNlep];
+    Float_t lep_eta[kMaxNlep];
+    Float_t lep_phi[kMaxNlep];
+    Float_t lep_charge[kMaxNlep];
 };
 
 #endif
