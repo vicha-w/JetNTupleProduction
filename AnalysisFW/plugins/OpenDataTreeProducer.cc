@@ -42,6 +42,9 @@
 #include "DataFormats/BeamSpot/interface/BeamSpot.h"
 #include "DataFormats/TrackReco/interface/TrackFwd.h"
 
+#include "DataFormats/PatCandidates/interface/Muon.h"
+#include "DataFormats/PatCandidates/interface/Electron.h"
+
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenRunInfoProduct.h"
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
@@ -135,12 +138,19 @@ void OpenDataTreeProducer::beginJob() {
     mTree->Branch("bstar", bstar, "bstar[njet]/F");
 */
 
-    // Lepton variables
-    mTree->Branch("nlep", &nlep, "nlep/i");
-    mTree->Branch("lep_pt", lep_pt, "lep_pt[nlep]/F");
-    mTree->Branch("lep_eta", lep_eta, "lep_eta[nlep]/F");
-    mTree->Branch("lep_phi", lep_phi, "lep_phi[nlep]/F");
-    mTree->Branch("lep_charge", lep_charge, "lep_charge[nlep]/F");
+    // Muon and electron variables
+    mTree->Branch("nmu", &nmu, "nmu/i");
+    mTree->Branch("muon_pt", muon_pt, "muon_pt[nmu]/F");
+    mTree->Branch("muon_eta", muon_eta, "muon_eta[nmu]/F");
+    mTree->Branch("muon_phi", muon_phi, "muon_phi[nmu]/F");
+    mTree->Branch("muon_E", muon_E, "muon_E[nmu]/F");
+    mTree->Branch("muon_charge", muon_charge, "muon_charge[nmu]/I");
+    mTree->Branch("nele", &nele, "nele/i");
+    mTree->Branch("electron_pt", electron_pt, "electron_pt[nele]/F");
+    mTree->Branch("electron_eta", electron_eta, "electron_eta[nele]/F");
+    mTree->Branch("electron_phi", electron_phi, "electron_phi[nele]/F");
+    mTree->Branch("electron_E", electron_E, "electron_E[nele]/F");
+    mTree->Branch("electron_charge", electron_charge, "electron_charge[nele]/I");
 }
 
 void OpenDataTreeProducer::endJob() {
@@ -393,7 +403,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         jet_pt[ak5_index]   = p4.Pt();
         jet_eta[ak5_index]  = p4.Eta();
         jet_phi[ak5_index]  = p4.Phi();
-        jet_E[ak5_index]    = p4.E(); 
+        jet_E[ak5_index]    = p4.E();
         
         // Matching a GenJet to this PFjet
         if (mIsMCarlo && ngen > 0) {
@@ -415,7 +425,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
             }
         }
         
-    ak5_index++;
+        ak5_index++;
     }
     // Number of selected jets in the event
     njet = ak5_index;    
@@ -432,7 +442,8 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     int ak7_index = 0;
 
     // Iterate only over four leading jets
-    for (auto i_ak7jet = ak7_patjets.begin(); i_ak7jet != ak7_patjets.end() && i_ak7jet - ak7_patjets.begin() != 4; ++i_ak7jet) {
+    for (auto i_ak7jet = ak7_patjets.begin(); i_ak7jet != ak7_patjets.end() && i_ak7jet - ak7_patjets.begin() != 4; ++i_ak7jet) 
+    {
 
         // Skip the current iteration if jet is not selected
         if (!i_ak7jet->isPFJet() || 
@@ -481,6 +492,43 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
 
     met = (*met_handle)[0].et();
     sumet = (*met_handle)[0].sumEt();
+
+    // Leptons
+    // Muons first
+    edm::Handle<std::vector<pat::Muon>> muon_handle;
+    event_obj.getByLabel("pfMuon",muon_handle);
+    std::vector<pat::Muon> muons(muon_handle->begin(), muon_handle->end());
+    int muon_index = 0;
+    for (auto i_muon = muons.begin(); i_muon != muons.end(); i_muon++)
+    {
+        auto p4 = i_muon->p4();
+        muon_pt[muon_index]   = p4.Pt();
+        muon_eta[muon_index]  = p4.Eta();
+        muon_phi[muon_index]  = p4.Phi();
+        muon_E[muon_index]    = p4.E();
+
+        muon_charge[muon_index] = i_muon->charge();
+
+        muon_index++;
+    }
+
+    // Electrons later
+    edm::Handle<std::vector<pat::Electron>> electron_handle;
+    event_obj.getByLabel("pfElectron",electron_handle);
+    std::vector<pat::Electron> electrons(electron_handle->begin(), electron_handle->end());
+    int electron_index = 0;
+    for (auto i_electron = electrons.begin(); i_electron != electrons.end(); i_electrons++)
+    {
+        auto p4 = i_electron->p4();
+        electron_pt[electron_index]   = p4.Pt();
+        electron_eta[electron_index]  = p4.Eta();
+        electron_phi[electron_index]  = p4.Phi();
+        electron_E[electron_index]    = p4.E();
+        
+        electron_charge[electron_index] = i_electron->charge();
+        
+        electron_index++;
+    }
 
     // Finally, fill the tree
     if (njet >= (unsigned)mMinNPFJets && 
