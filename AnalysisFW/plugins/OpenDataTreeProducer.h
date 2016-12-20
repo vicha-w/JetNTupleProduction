@@ -73,7 +73,8 @@ class OpenDataTreeProducer : public edm::EDAnalyzer
     
     static const UInt_t kMaxNjet = 64;
     static const UInt_t kMaxNtrg = 32;
-    static const UInt_t kMaxNlep = 64;
+    static const UInt_t kMaxNmu = 64;
+    static const UInt_t kMaxNele = 64;
 
     // PF jets
     UInt_t njet;
@@ -141,12 +142,19 @@ class OpenDataTreeProducer : public edm::EDAnalyzer
     Float_t pthat;
     Float_t mcweight;
 
-    // Leptons 
-    UInt_t nlep;
-    Float_t lep_pt[kMaxNlep];
-    Float_t lep_eta[kMaxNlep];
-    Float_t lep_phi[kMaxNlep];
-    Float_t lep_charge[kMaxNlep];
+    // Muons
+    UInt_t nmu;
+    Float_t muon_pt[kMaxNmu];
+    Float_t muon_eta[kMaxNmu];
+    Float_t muon_phi[kMaxNmu];
+    Float_t muon_charge[kMaxNmu];
+
+    // Electrons
+    UInt_t nele;
+    Float_t electron_pt[kMaxNele];
+    Float_t electron_eta[kMaxNele];
+    Float_t electron_phi[kMaxNele];
+    Float_t electron_charge[kMaxNele];
 };
 
 #endif
