@@ -23,7 +23,7 @@
 <use   name="CondFormats/L1TObjects"/>
 <use   name="CondFormats/DataRecord"/>
 <use   name="CondFormats/JetMETObjects"/>
-<use   name="cms-opendata-2011-jets/AnalysisFW"/>
+<use   name="JetNTupleProduction/AnalysisFW"/>
 <flags   EDM_PLUGIN="1"/>
 </library>
 
