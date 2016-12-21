@@ -119,7 +119,6 @@ process.trackingFailureFilter.VertexSource = cms.InputTag('goodOfflinePrimaryVer
 
 
 ################### EDAnalyzer ##############################
-process.ak5ak7 = cms.EDAnalyzer()
 if not isMC:
     process.ak5ak7 = cms.EDAnalyzer('OpenDataTreeProducer',
         ## jet collections ###########################
