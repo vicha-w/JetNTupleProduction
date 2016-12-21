@@ -83,7 +83,7 @@ void OpenDataTreeProducer::beginJob() {
     mTree->Branch("jet_pt", jet_pt, "jet_pt[njet]/F");
     mTree->Branch("jet_eta", jet_eta, "jet_eta[njet]/F");
     mTree->Branch("jet_phi", jet_phi, "jet_phi[njet]/F");
-    mTree->Branch("jet_btag", jet_btag, "jet_btag[njet]/F")
+    mTree->Branch("jet_btag", jet_btag, "jet_btag[njet]/F");
     mTree->Branch("jet_E", jet_E, "jet_E[njet]/F");   
     mTree->Branch("jet_tightID", jet_tightID, "jet_tightID[njet]/O");
     mTree->Branch("jet_area", jet_area, "jet_area[njet]/F");
@@ -517,7 +517,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     event_obj.getByLabel("pfElectron",electron_handle);
     std::vector<pat::Electron> electrons(electron_handle->begin(), electron_handle->end());
     int electron_index = 0;
-    for (auto i_electron = electrons.begin(); i_electron != electrons.end(); i_electrons++)
+    for (auto i_electron = electrons.begin(); i_electron != electrons.end(); i_electron++)
     {
         auto p4 = i_electron->p4();
         electron_pt[electron_index]   = p4.Pt();

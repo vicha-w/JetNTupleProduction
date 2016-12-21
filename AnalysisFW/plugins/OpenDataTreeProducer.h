@@ -48,7 +48,7 @@ class OpenDataTreeProducer : public edm::EDAnalyzer
     int             mGoodVtxNdof;
     double          mGoodVtxZ; 
     edm::InputTag   mPFak5JetsName;
-    // edm::InputTag   mPFak7JetsName;
+    edm::InputTag   mPFak7JetsName;
 
     
     // ---- PF Jet input tags ----- //
