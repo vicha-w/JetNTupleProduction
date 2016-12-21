@@ -18,7 +18,7 @@
 #include <cassert>
 #include <TLorentzVector.h>
 
-#include "cms-opendata-2011-jets/AnalysisFW/plugins/OpenDataTreeProducer.h"
+#include "JetNTupleProduction/AnalysisFW/plugins/OpenDataTreeProducer.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/Framework/interface/ESHandle.h"
 #include "FWCore/Framework/interface/Frameworkfwd.h"
