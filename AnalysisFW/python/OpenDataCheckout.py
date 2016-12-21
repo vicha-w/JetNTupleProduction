@@ -6,6 +6,7 @@
 
 isMC = False # MC or data
 customGlobalTag = ''
+customIndexFile = ''
 customOutFileName = ''
 
 ## Import skeleton process
@@ -20,7 +21,10 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 runOnVM = False
 
 # Index of data files
-files2011data = FileUtils.loadListFromFile('CMS_Run2011A_Jet_AOD_12Oct2013-v1_20000_file_index.txt')
+if customIndexFile != '' and type(customIndexFile) == str:
+    files2011data = FileUtils.loadListFromFile(customIndexFile)
+else:
+    files2011data = FileUtils.loadListFromFile('CMS_Run2011A_Jet_AOD_12Oct2013-v1_20000_file_index.txt')
 process.source.fileNames = cms.untracked.vstring(*files2011data)
 
 # Read condition data from local sqlite database
@@ -40,7 +44,7 @@ if not isMC:
 # Global tag for 2011A data 'FT_53_LV5_AN1::All'
 # Global tag for Summer11LegDR-PU_S13_START53_LV6-v1 'START53_LV6A1::All'
 
-if not customGlobalTag == '' or type(customGlobalTag) != str:
+if customGlobalTag == '' or type(customGlobalTag) != str:
     if isMC: process.GlobalTag.globaltag = cms.string('START53_LV6A1::All')
     else: process.GlobalTag.globaltag = 'FT_53_LV5_AN1::All'
 else: process.GlobalTag.globaltag = cms.string(customGlobalTag)
@@ -115,7 +119,7 @@ process.trackingFailureFilter.VertexSource = cms.InputTag('goodOfflinePrimaryVer
 
 
 ################### EDAnalyzer ##############################
-process.ak5ak7 = cms.EdAnalyzer()
+process.ak5ak7 = cms.EDAnalyzer()
 if not isMC:
     process.ak5ak7 = cms.EDAnalyzer('OpenDataTreeProducer',
         ## jet collections ###########################
