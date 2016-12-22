@@ -496,7 +496,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     // Leptons
     // Muons first
     edm::Handle<std::vector<pat::Muon>> muon_handle;
-    event_obj.getByLabel("pfMuon",muon_handle);
+    event_obj.getByLabel("cleanPatMuons",muon_handle);
     std::vector<pat::Muon> muons(muon_handle->begin(), muon_handle->end());
     int muon_index = 0;
     for (auto i_muon = muons.begin(); i_muon != muons.end(); i_muon++)
@@ -514,7 +514,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
 
     // Electrons later
     edm::Handle<std::vector<pat::Electron>> electron_handle;
-    event_obj.getByLabel("pfElectron",electron_handle);
+    event_obj.getByLabel("cleanPatElectrons",electron_handle);
     std::vector<pat::Electron> electrons(electron_handle->begin(), electron_handle->end());
     int electron_index = 0;
     for (auto i_electron = electrons.begin(); i_electron != electrons.end(); i_electron++)

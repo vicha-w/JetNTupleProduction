@@ -64,6 +64,8 @@ from PhysicsTools.PatAlgos.tools.pfTools import *
 from PhysicsTools.PatAlgos.tools.coreTools import *
 from PhysicsTools.PatAlgos.tools.metTools import *
 from PhysicsTools.PatAlgos.tools.jetTools import *
+from PhysicsTools.PatAlgos.tools.muonTools import *
+from PhysicsTools.PatAlgos.tools.electronTools import *
 from PhysicsTools.PatAlgos.tools.coreTools import *
 from PhysicsTools.SelectorUtils.pvSelector_cfi import pvSelector
 
