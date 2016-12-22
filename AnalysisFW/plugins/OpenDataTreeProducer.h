@@ -56,6 +56,10 @@ class OpenDataTreeProducer : public edm::EDAnalyzer
     edm::InputTag   mSrcPFRho;
     edm::InputTag   mPFMET; 
     edm::InputTag   mOfflineVertices;
+
+    // ---- Muon and Electron input tags
+    edm::InputTag   mMuonName;
+    edm::InputTag   mElectronName;
     
     //---- Trigger----------------------
     std::string                 processName_;

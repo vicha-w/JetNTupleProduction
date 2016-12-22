@@ -149,6 +149,9 @@ if not isMC:
                                     ),
         triggerResults  = cms.InputTag("TriggerResults","","HLT"),
         triggerEvent    = cms.InputTag("hltTriggerSummaryAOD","","HLT"),
+
+        muon            = cms.InputTag('cleanPatMuons'),
+        electron        = cms.InputTag('cleanPatElectrons')
     )
 else:
     process.ak5ak7 = cms.EDAnalyzer('OpenDataTreeProducer',
@@ -180,7 +183,10 @@ else:
                                     'HLT_Jet150','HLT_Jet190','HLT_Jet240','HLT_Jet370',
                                     ),
         triggerResults  = cms.InputTag("TriggerResults","","HLT"),
-        triggerEvent    = cms.InputTag("hltTriggerSummaryAOD","","HLT")
+        triggerEvent    = cms.InputTag("hltTriggerSummaryAOD","","HLT"),
+
+        muon            = cms.InputTag('cleanPatMuons'),
+        electron        = cms.InputTag('cleanPatElectrons')
     )
 
 # HLT filter
