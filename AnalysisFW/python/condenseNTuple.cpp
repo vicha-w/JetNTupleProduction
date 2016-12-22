@@ -6,42 +6,33 @@
 
 const float bTagDiscrimLevel = 0.75;
 
-void condenseNTuple(const char* fileName, const char* treeName="OpenDataTree")
+void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataTree")
 {
-    TFile *file;
-    try
-    {
-        *file = new TFile(fileName);
-    }
-    catch (int e)
-    {
-        printf(strcat(fileName," does not exist. Exiting..."));
-        return;
-    }
+    TFile *file = new TFile(fileName);
     TTree *tree = (TTree*) file->Get(treeName);
 
-    int njet, nmu, nele;
+    UInt_t njet, nmu, nele;
     const int maxElements = 64;
 
-    float jet_pt[maxElements];
-    float jet_eta[maxElements];
-    float jet_phi[maxElements];
-    float jet_E[maxElements];
-    float jet_bTag[maxElements];
+    Float_t jet_pt[maxElements];
+    Float_t jet_eta[maxElements];
+    Float_t jet_phi[maxElements];
+    Float_t jet_E[maxElements];
+    Float_t jet_bTag[maxElements];
 
-    float muon_pt[maxElements];
-    float muon_eta[maxElements];
-    float muon_phi[maxElements];
-    float muon_E[maxElements];
-    int muon_charge[maxElements];
+    Float_t muon_pt[maxElements];
+    Float_t muon_eta[maxElements];
+    Float_t muon_phi[maxElements];
+    Float_t muon_E[maxElements];
+    Int_t muon_charge[maxElements];
 
-    float electron_pt[maxElements];
-    float electron_eta[maxElements];
-    float electron_phi[maxElements];
-    float electron_E[maxElements];
-    int electron_charge[maxElements];
+    Float_t electron_pt[maxElements];
+    Float_t electron_eta[maxElements];
+    Float_t electron_phi[maxElements];
+    Float_t electron_E[maxElements];
+    Int_t electron_charge[maxElements];
 
-    float met_pt, met_eta, met_phi;
+    Float_t met_pt, met_eta, met_phi;
 
     tree->SetBranchAddress("njet",&njet);
     tree->SetBranchAddress("nmu",&nmu);
@@ -51,7 +42,7 @@ void condenseNTuple(const char* fileName, const char* treeName="OpenDataTree")
     tree->SetBranchAddress("jet_eta",jet_eta);
     tree->SetBranchAddress("jet_phi",jet_phi);
     tree->SetBranchAddress("jet_E",jet_E);
-    tree->SetBranchAddress("jet_bTag",jet_bTag);
+    tree->SetBranchAddress("jet_btag",jet_bTag);
 
     tree->SetBranchAddress("muon_pt",muon_pt);
     tree->SetBranchAddress("muon_eta",muon_eta);
@@ -70,54 +61,54 @@ void condenseNTuple(const char* fileName, const char* treeName="OpenDataTree")
     tree->SetBranchAddress("met_phi",&met_phi);
 
     TFile outFile(strcat("condensed_",fileName),"RECREATE");
-    TTree outTree("condensedNTuple");
+    TTree outTree("condensedNTuple","Condensed NTuple");
 
-    float jet1_pt;
-    float jet1_eta;
-    float jet1_phi;
-    float jet1_E;
-    float jet1_bTag;
+    Float_t jet1_pt;
+    Float_t jet1_eta;
+    Float_t jet1_phi;
+    Float_t jet1_E;
+    Float_t jet1_bTag;
 
-    float jet2_pt;
-    float jet2_eta;
-    float jet2_phi;
-    float jet2_E;
-    float jet2_bTag;
+    Float_t jet2_pt;
+    Float_t jet2_eta;
+    Float_t jet2_phi;
+    Float_t jet2_E;
+    Float_t jet2_bTag;
 
-    float lepton1_pt;
-    float lepton1_eta;
-    float lepton1_phi;
-    float lepton1_E;
-    int lepton1_charge;
+    Float_t lepton1_pt;
+    Float_t lepton1_eta;
+    Float_t lepton1_phi;
+    Float_t lepton1_E;
+    Int_t lepton1_charge;
 
-    float lepton2_pt;
-    float lepton2_eta;
-    float lepton2_phi;
-    float lepton2_E;
-    int lepton2_charge;
+    Float_t lepton2_pt;
+    Float_t lepton2_eta;
+    Float_t lepton2_phi;
+    Float_t lepton2_E;
+    Int_t lepton2_charge;
 
     outTree.Branch("jet1_pt",&jet1_pt,"jet1_pt/F");
-    outTree.Branch("jet1_eta",&jet1_eta,"jet1_pt/F");
-    outTree.Branch("jet1_phi",&jet1_phi,"jet1_pt/F");
-    outTree.Branch("jet1_E",&jet1_E,"jet1_pt/F");
-    outTree.Branch("jet1_bTag",&jet1_bTag,"jet1_pt/F");
+    outTree.Branch("jet1_eta",&jet1_eta,"jet1_eta/F");
+    outTree.Branch("jet1_phi",&jet1_phi,"jet1_phi/F");
+    outTree.Branch("jet1_E",&jet1_E,"jet1_E/F");
+    outTree.Branch("jet1_bTag",&jet1_bTag,"jet1_bTag/F");
 
     outTree.Branch("jet2_pt",&jet2_pt,"jet2_pt/F");
-    outTree.Branch("jet2_eta",&jet2_eta,"jet2_pt/F");
-    outTree.Branch("jet2_phi",&jet2_phi,"jet2_pt/F");
-    outTree.Branch("jet2_E",&jet2_E,"jet2_pt/F");
-    outTree.Branch("jet2_bTag",&jet2_bTag,"jet2_pt/F");
+    outTree.Branch("jet2_eta",&jet2_eta,"jet2_eta/F");
+    outTree.Branch("jet2_phi",&jet2_phi,"jet2_phi/F");
+    outTree.Branch("jet2_E",&jet2_E,"jet2_E/F");
+    outTree.Branch("jet2_bTag",&jet2_bTag,"jet2_bTag/F");
 
     outTree.Branch("lepton1_pt",&lepton1_pt,"lepton1_pt/F");
-    outTree.Branch("lepton1_eta",&lepton1_eta,"lepton1_pt/F");
-    outTree.Branch("lepton1_phi",&lepton1_phi,"lepton1_pt/F");
-    outTree.Branch("lepton1_E",&lepton1_E,"lepton1_pt/F");
+    outTree.Branch("lepton1_eta",&lepton1_eta,"lepton1_eta/F");
+    outTree.Branch("lepton1_phi",&lepton1_phi,"lepton1_phi/F");
+    outTree.Branch("lepton1_E",&lepton1_E,"lepton1_E/F");
     outTree.Branch("lepton1_charge",&lepton1_charge,"lepton1_charge/I");
 
     outTree.Branch("lepton2_pt",&lepton2_pt,"lepton2_pt/F");
-    outTree.Branch("lepton2_eta",&lepton2_eta,"lepton2_pt/F");
-    outTree.Branch("lepton2_phi",&lepton2_phi,"lepton2_pt/F");
-    outTree.Branch("lepton2_E",&lepton2_E,"lepton2_pt/F");
+    outTree.Branch("lepton2_eta",&lepton2_eta,"lepton2_eta/F");
+    outTree.Branch("lepton2_phi",&lepton2_phi,"lepton2_phi/F");
+    outTree.Branch("lepton2_E",&lepton2_E,"lepton2_E/F");
     outTree.Branch("lepton2_charge",&lepton2_charge,"lepton2_charge/I");
 
     outTree.Branch("met_pt",&met_pt,"met_pt/F");
@@ -138,7 +129,7 @@ void condenseNTuple(const char* fileName, const char* treeName="OpenDataTree")
 
         for (int j = 0; j < njet; j++)
         {
-            if (jet_btag[j] < bTagDiscrimLevel) continue;
+            if (jet_bTag[j] < bTagDiscrimLevel) continue;
             if (!jet1filled)
             {
                 jet1_pt = jet_pt[j];
@@ -302,7 +293,7 @@ void condenseNTuple(const char* fileName, const char* treeName="OpenDataTree")
             }
         }
 
-        for (int j = 0; i < nmu; i++)
+        for (int j = 0; i < nele; i++)
         {
             if (!lepton1filled)
             {
@@ -362,6 +353,6 @@ void condenseNTuple(const char* fileName, const char* treeName="OpenDataTree")
 
     outFile.cd();
     outTree.Write();
-    outFile.Close();
-    file->Close();
+    //outFile.Close();
+    //file->Close();
 }
