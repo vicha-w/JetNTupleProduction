@@ -150,6 +150,11 @@ class OpenDataTreeProducer : public edm::EDAnalyzer
     // MC variables
     Float_t pthat;
     Float_t mcweight;
+    
+    // Detailed MET
+    Float_t met_pt;
+    Float_t met_eta;
+    Float_t met_phi;
 
     // Muons
     UInt_t nmu;

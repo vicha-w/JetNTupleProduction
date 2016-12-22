@@ -142,6 +142,11 @@ void OpenDataTreeProducer::beginJob() {
     mTree->Branch("bstar", bstar, "bstar[njet]/F");
 */
 
+    // METs
+    mTree->Branch("met_pt",&met_pt,"met_pt/F");
+    mTree->Branch("met_eta",&met_eta,"met_eta/F");
+    mTree->Branch("met_phi",&met_phi,"met_phi/F");
+
     // Muon and electron variables
     mTree->Branch("nmu", &nmu, "nmu/i");
     mTree->Branch("muon_pt", muon_pt, "muon_pt[nmu]/F");
@@ -498,6 +503,11 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
 
     met = (*met_handle)[0].et();
     sumet = (*met_handle)[0].sumEt();
+
+    auto met_p4 = (*met_handle)[0].p4();
+    met_pt = met_p4.Pt();
+    met_eta = met_p4.Eta();
+    met_phi = met_p4.Phi();
 
     // Leptons
     // Muons first
