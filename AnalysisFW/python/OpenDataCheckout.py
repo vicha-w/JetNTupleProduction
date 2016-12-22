@@ -152,7 +152,7 @@ if not isMC:
 
         muon            = cms.InputTag('cleanPatMuons'),
         electron        = cms.InputTag('cleanPatElectrons'),
-        bTagDiscriminator = cms.InputTag('trackCountingHighEffBJetTags')
+        bTagDiscriminator = cms.string('trackCountingHighEffBJetTags')
     )
 else:
     process.ak5ak7 = cms.EDAnalyzer('OpenDataTreeProducer',
@@ -188,7 +188,7 @@ else:
 
         muon            = cms.InputTag('cleanPatMuons'),
         electron        = cms.InputTag('cleanPatElectrons'),
-        bTagDiscriminator = cms.InputTag('trackCountingHighEffBJetTags')
+        bTagDiscriminator = cms.string('trackCountingHighEffBJetTags')
     )
 
 # HLT filter
