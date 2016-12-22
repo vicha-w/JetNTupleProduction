@@ -511,6 +511,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
 
         muon_index++;
     }
+    nmu = muon_index;
 
     // Electrons later
     edm::Handle<std::vector<pat::Electron>> electron_handle;
@@ -529,6 +530,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         
         electron_index++;
     }
+    nele = electron_index;
 
     // Finally, fill the tree
     if (njet >= (unsigned)mMinNPFJets && 
