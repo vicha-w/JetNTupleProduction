@@ -75,7 +75,7 @@ OpenDataTreeProducer::OpenDataTreeProducer(edm::ParameterSet const &cfg) {
 
   mMuonName          = cfg.getParameter<edm::InputTag>             ("muon");
   mElectronName      = cfg.getParameter<edm::InputTag>             ("electron");
-  mBTagDiscriminator = cfg.getParameter<edm::InputTag>             ("bTagDiscriminator");
+  mBTagDiscriminator = cfg.getParameter<std::string>             ("bTagDiscriminator");
 }
 
 
