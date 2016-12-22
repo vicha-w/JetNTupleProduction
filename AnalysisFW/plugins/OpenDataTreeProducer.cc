@@ -75,6 +75,7 @@ OpenDataTreeProducer::OpenDataTreeProducer(edm::ParameterSet const &cfg) {
 
   mMuonName          = cfg.getParameter<edm::InputTag>             ("muon");
   mElectronName      = cfg.getParameter<edm::InputTag>             ("electron");
+  mBTagDiscriminator = cfg.getParameter<edm::InputTag>             ("bTagDiscriminator");
 }
 
 
@@ -407,6 +408,8 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         jet_eta[ak5_index]  = p4.Eta();
         jet_phi[ak5_index]  = p4.Phi();
         jet_E[ak5_index]    = p4.E();
+
+        jet_btag[ak5_index] = i_ak5jet->bDiscriminator(mBTagDiscriminator);
         
         // Matching a GenJet to this PFjet
         if (mIsMCarlo && ngen > 0) {

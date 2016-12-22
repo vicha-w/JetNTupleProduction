@@ -57,6 +57,9 @@ class OpenDataTreeProducer : public edm::EDAnalyzer
     edm::InputTag   mPFMET; 
     edm::InputTag   mOfflineVertices;
 
+    // ---- BTag discriminator input tag
+    edm::InputTag   mBTagDiscriminator;
+
     // ---- Muon and Electron input tags
     edm::InputTag   mMuonName;
     edm::InputTag   mElectronName;
