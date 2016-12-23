@@ -240,7 +240,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
             }
         }
 
-        for (int j = 0; i < nmu; i++)
+        for (int j = 0; j < nmu; j++)
         {
             if (!lepton1filled)
             {
@@ -295,7 +295,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
             }
         }
 
-        for (int j = 0; i < nele; i++)
+        for (int j = 0; j < nele; j++)
         {
             if (!lepton1filled)
             {
