@@ -32,7 +32,9 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
     Float_t electron_E[maxElements];
     Int_t electron_charge[maxElements];
 
-    Float_t met_pt, met_eta, met_phi;
+    Float_t met_pt;
+    //Float_t met_eta;
+    Float_t met_phi;
 
     tree->SetBranchAddress("njet",&njet);
     tree->SetBranchAddress("nmu",&nmu);
@@ -57,7 +59,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
     tree->SetBranchAddress("electron_charge",electron_charge);
 
     tree->SetBranchAddress("met_pt",&met_pt);
-    tree->SetBranchAddress("met_eta",&met_eta);
+    //tree->SetBranchAddress("met_eta",&met_eta);
     tree->SetBranchAddress("met_phi",&met_phi);
 
     TFile outFile(strcat("condensed_",fileName),"RECREATE");
@@ -112,7 +114,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
     outTree.Branch("lepton2_charge",&lepton2_charge,"lepton2_charge/I");
 
     outTree.Branch("met_pt",&met_pt,"met_pt/F");
-    outTree.Branch("met_eta",&met_eta,"met_eta/F");
+    //outTree.Branch("met_eta",&met_eta,"met_eta/F");
     outTree.Branch("met_phi",&met_phi,"met_phi/F");
 
     Long64_t nentries = tree->GetEntries();
