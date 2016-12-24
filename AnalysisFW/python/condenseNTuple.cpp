@@ -254,7 +254,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
             }
             else
             {
-                if (jet_pt[j] > lepton1_pt)
+                if (muon_pt[j] > lepton1_pt)
                 {
                     lepton2_pt = lepton1_pt;
                     lepton2_eta = lepton1_eta;
@@ -309,7 +309,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
             }
             else
             {
-                if (jet_pt[j] > lepton1_pt)
+                if (electron_pt[j] > lepton1_pt)
                 {
                     lepton2_pt = lepton1_pt;
                     lepton2_eta = lepton1_eta;
