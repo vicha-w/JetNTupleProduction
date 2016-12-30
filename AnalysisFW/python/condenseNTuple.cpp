@@ -240,6 +240,9 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
             }
         }
 
+        if (jet1_bTag < 0) jet1_bTag = 0;
+        if (jet2_bTag < 0) jet2_bTag = 0;
+
         for (int j = 0; j < nmu; j++)
         {
             if (!lepton1filled)
