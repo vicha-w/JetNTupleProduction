@@ -136,8 +136,8 @@ if not isMC:
         srcPFRho        = cms.InputTag('kt6PFJets','rho'),
         ## preselection cuts #########################
         maxY            = cms.double(5.0), 
-        minPFPt         = cms.double(15),
-        minNPFJets      = cms.int32(1),
+        minPFPtJets     = cms.double(30),
+        minNPFJets      = cms.int32(2),
         minJJMass       = cms.double(-1),
         isMCarlo        = cms.untracked.bool(False),
         ## trigger ###################################
@@ -152,7 +152,10 @@ if not isMC:
 
         muon            = cms.InputTag('cleanPatMuons'),
         electron        = cms.InputTag('cleanPatElectrons'),
-        bTagDiscriminator = cms.string('trackCountingHighEffBJetTags')
+        bTagDiscriminator = cms.string('trackCountingHighEffBJetTags'),
+
+        minPtLeptons    = cms.double(20),
+        maxEtaLeptons   = cms.double(2.4)
     )
 else:
     process.ak5ak7 = cms.EDAnalyzer('OpenDataTreeProducer',
@@ -169,8 +172,8 @@ else:
         srcPFRho        = cms.InputTag('kt6PFJets','rho'),
         ## preselection cuts #########################
         maxY            = cms.double(5.0), 
-        minPFPt         = cms.double(30),
-        minNPFJets      = cms.int32(1),
+        minPFPtJets     = cms.double(30),
+        minNPFJets      = cms.int32(2),
         minGenPt        = cms.untracked.double(30),
         minJJMass       = cms.double(-1),
         isMCarlo        = cms.untracked.bool(True),
@@ -188,7 +191,10 @@ else:
 
         muon            = cms.InputTag('cleanPatMuons'),
         electron        = cms.InputTag('cleanPatElectrons'),
-        bTagDiscriminator = cms.string('trackCountingHighEffBJetTags')
+        bTagDiscriminator = cms.string('trackCountingHighEffBJetTags'),
+
+        minPtLeptons    = cms.double(20),
+        maxEtaLeptons   = cms.double(2.4)
     )
 
 # HLT filter
