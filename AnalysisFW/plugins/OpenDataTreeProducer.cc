@@ -77,8 +77,8 @@ OpenDataTreeProducer::OpenDataTreeProducer(edm::ParameterSet const &cfg) {
   mElectronName      = cfg.getParameter<edm::InputTag>             ("electron");
   mBTagDiscriminator = cfg.getParameter<std::string>               ("bTagDiscriminator");
 
-  mMinPtLeptons      = cfg.getParameter<double>                    ("minPtLeptons",20);
-  mMaxEtaLeptons     = cfg.getParameter<double>                    ("maxEtaLeptons",2.4);
+  mMinPtLeptons      = cfg.getUntrackedParameter<double>                    ("minPtLeptons",20);
+  mMaxEtaLeptons     = cfg.getUntrackedParameter<double>                    ("maxEtaLeptons",2.4);
 }
 
 
