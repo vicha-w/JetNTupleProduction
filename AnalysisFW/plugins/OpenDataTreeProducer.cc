@@ -53,7 +53,7 @@
 #include "JetMETCorrections/Objects/interface/JetCorrectionsRecord.h"
 
 OpenDataTreeProducer::OpenDataTreeProducer(edm::ParameterSet const &cfg) {
-  mMinPFPt           = cfg.getParameter<double>                    ("minPFPt");
+  mMinPFPtJets       = cfg.getParameter<double>                    ("minPFPtJets");
   mMinJJMass         = cfg.getParameter<double>                    ("minJJMass");
   mMaxY              = cfg.getParameter<double>                    ("maxY");
   mMinNPFJets        = cfg.getParameter<int>                       ("minNPFJets");
@@ -75,7 +75,10 @@ OpenDataTreeProducer::OpenDataTreeProducer(edm::ParameterSet const &cfg) {
 
   mMuonName          = cfg.getParameter<edm::InputTag>             ("muon");
   mElectronName      = cfg.getParameter<edm::InputTag>             ("electron");
-  mBTagDiscriminator = cfg.getParameter<std::string>             ("bTagDiscriminator");
+  mBTagDiscriminator = cfg.getParameter<std::string>               ("bTagDiscriminator");
+
+  mMinPtLeptons      = cfg.getParameter<double>                    ("minPtLeptons",20);
+  mMaxEtaLeptons     = cfg.getParameter<double>                    ("maxEtaLeptons",2.4);
 }
 
 
@@ -318,7 +321,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         // Skip the current iteration if jet is not selected
         if (!i_ak5jet->isPFJet() || 
             fabs(i_ak5jet->y()) > mMaxY || 
-            (i_ak5jet->pt()) < mMinPFPt) {
+            (i_ak5jet->pt()) < mMinPFPtJets) {
             continue;
         }
 
@@ -459,7 +462,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         // Skip the current iteration if jet is not selected
         if (!i_ak7jet->isPFJet() || 
             fabs(i_ak7jet->y()) > mMaxY || 
-            (i_ak7jet->pt()) < mMinPFPt) {
+            (i_ak7jet->pt()) < mMinPFPtJets) {
             continue;
         }
 
@@ -518,6 +521,8 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     for (auto i_muon = muons.begin(); i_muon != muons.end(); i_muon++)
     {
         auto p4 = i_muon->p4();
+        if (p4.Pt() < mMinPtLeptons) continue;
+        if (p4.Eta() > mMaxEtaLeptons) continue;
         muon_pt[muon_index]   = p4.Pt();
         muon_eta[muon_index]  = p4.Eta();
         muon_phi[muon_index]  = p4.Phi();
@@ -537,6 +542,8 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     for (auto i_electron = electrons.begin(); i_electron != electrons.end(); i_electron++)
     {
         auto p4 = i_electron->p4();
+        if (p4.Pt() < mMinPtLeptons) continue;
+        if (p4.Eta() > mMaxEtaLeptons) continue;
         electron_pt[electron_index]   = p4.Pt();
         electron_eta[electron_index]  = p4.Eta();
         electron_phi[electron_index]  = p4.Phi();

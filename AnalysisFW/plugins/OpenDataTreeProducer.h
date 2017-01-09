@@ -63,6 +63,10 @@ class OpenDataTreeProducer : public edm::EDAnalyzer
     // ---- Muon and Electron input tags
     edm::InputTag   mMuonName;
     edm::InputTag   mElectronName;
+
+    // ---- Lepton minimum criteria
+    double          mMinPtLeptons;
+    double          mMaxEtaLeptons;
     
     //---- Trigger----------------------
     std::string                 processName_;
