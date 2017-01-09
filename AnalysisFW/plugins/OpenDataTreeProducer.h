@@ -44,7 +44,7 @@ class OpenDataTreeProducer : public edm::EDAnalyzer
     bool            mUseGenInfo;
     bool            mPrintTriggerMenu;
     int             mMinNPFJets;
-    double          mMinPFPt, mMinGenPt, mMaxY, mMinJJMass;
+    double          mMinPFPtJets, mMinGenPt, mMaxY, mMinJJMass;
     int             mGoodVtxNdof;
     double          mGoodVtxZ; 
     edm::InputTag   mPFak5JetsName;
