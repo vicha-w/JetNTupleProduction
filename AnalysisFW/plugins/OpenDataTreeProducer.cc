@@ -248,7 +248,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
 
         // Total prescale: PreL1*PreHLT 
         prescales[itrig] = prescalePair.first*prescalePair.second;   
-        std::cout << prescales[itrig] << ' ' << isAccepted << std::endl;
+        //std::cout << prescales[itrig] << ' ' << isAccepted << std::endl;
     }    
 
     // Rho
