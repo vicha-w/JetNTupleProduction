@@ -9,6 +9,8 @@ customGlobalTag = ''
 customIndexFile = ''
 customOutFileName = ''
 
+numberOfEvents = -1
+
 ## Import skeleton process
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 import FWCore.Utilities.FileUtils as FileUtils
@@ -220,7 +222,7 @@ process.p = cms.Path(
 # - MC:   50000 events / 5 hours
 
 # Change number of events here:
-process.maxEvents.input = -1
+process.maxEvents.input = numberOfEvents
 
 process.MessageLogger.cerr.FwkReport.reportEvery = 5
 
