@@ -62,7 +62,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
     //tree->SetBranchAddress("met_eta",&met_eta);
     tree->SetBranchAddress("met_phi",&met_phi);
 
-    TFile outFile((string("condensed_"+string(fileName)).c_str(),"RECREATE");
+    TFile outFile((string("condensed_"+string(fileName)).c_str(),"RECREATE"));
     TTree outTree("condensedNTuple","Condensed NTuple");
 
     Float_t jet1_pt;
