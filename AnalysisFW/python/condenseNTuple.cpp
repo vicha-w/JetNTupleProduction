@@ -243,113 +243,122 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
         if (jet1_bTag < 0) jet1_bTag = 0;
         if (jet2_bTag < 0) jet2_bTag = 0;
 
-        for (int j = 0; j < nmu; j++)
-        {
-            if (!lepton1filled)
-            {
-                lepton1_pt = muon_pt[j];
-                lepton1_eta = muon_eta[j];
-                lepton1_phi = muon_phi[j];
-                lepton1_E = muon_E[j];
-                lepton1_charge = muon_charge[j];
+        UInt_t p_count = 0;
+        UInt_t m_count = 0;
 
-                lepton1filled = true;
+        for (int i = 0; i < nmu; i++)
+        {
+            if (muon_charge[i] > 0)p_count++;
+            else m_count++;
+        }
+        
+        for (int i = 0; i < nele; i++)
+        {
+            if (electron_charge[i] > 0) p_count
+            else m_count++;
+        }
+
+        Float_t leptonP_pt[p_count];
+        Float_t leptonP_eta[p_count];
+        Float_t leptonP_phi[p_count];
+        Float_t leptonP_E[p_count];
+
+        Float_t leptonM_pt[m_count];
+        Float_t leptonM_eta[m_count];
+        Float_t leptonM_phi[m_count];
+        Float_t leptonM_E[m_count];
+
+        p_count = 0;
+        m_count = 0;
+
+        for (int i = 0; i < mu; i++)
+        {
+            if (muon_charge[i] > 0)
+            {
+                leptonP_pt[p_count]  = muon_pt[i];
+                leptonP_eta[p_count] = muon_eta[i];
+                leptonP_phi[p_count] = muon_phi[i];
+                leptonP_E[p_count]   = muon_E[i];
+                p_count++;
             }
             else
             {
-                if (muon_pt[j] > lepton1_pt)
-                {
-                    lepton2_pt = lepton1_pt;
-                    lepton2_eta = lepton1_eta;
-                    lepton2_phi = lepton1_phi;
-                    lepton2_E = lepton1_E;
-                    lepton2_charge = lepton1_charge;
-
-                    lepton2filled = true;
-
-                    lepton1_pt = muon_pt[j];
-                    lepton1_eta = muon_eta[j];
-                    lepton1_phi = muon_phi[j];
-                    lepton1_E = muon_E[j];
-                    lepton1_charge = muon_charge[j];
-
-                    lepton1filled = true;
-                }
-                else if (!lepton2filled)
-                {
-                    lepton2_pt = muon_pt[j];
-                    lepton2_eta = muon_eta[j];
-                    lepton2_phi = muon_phi[j];
-                    lepton2_E = muon_E[j];
-                    lepton2_charge = muon_charge[j];
-
-                    lepton2filled = true;
-                }
-                else if (muon_pt[j] > lepton2_pt)
-                {
-                    lepton2_pt = muon_pt[j];
-                    lepton2_eta = muon_eta[j];
-                    lepton2_phi = muon_phi[j];
-                    lepton2_E = muon_E[j];
-                    lepton2_charge = muon_charge[j];
-
-                    lepton2filled = true;
-                }
+                leptonM_pt[m_count]  = muon_pt[i];
+                leptonM_eta[m_count] = muon_eta[i];
+                leptonM_phi[m_count] = muon_phi[i];
+                leptonM_E[m_count]   = muon_E[i];
+                m_count++;
             }
         }
 
-        for (int j = 0; j < nele; j++)
+        for (int i = 0; i < mu; i++)
         {
-            if (!lepton1filled)
+            if (electron_charge[i] > 0)
             {
-                lepton1_pt = electron_pt[j];
-                lepton1_eta = electron_eta[j];
-                lepton1_phi = electron_phi[j];
-                lepton1_E = electron_E[j];
-                lepton1_charge = electron_charge[j];
-
-                lepton1filled = true;
+                leptonP_pt[p_count]  = electron_pt[i];
+                leptonP_eta[p_count] = electron_eta[i];
+                leptonP_phi[p_count] = electron_phi[i];
+                leptonP_E[p_count]   = electron_E[i];
+                p_count++;
             }
             else
             {
-                if (electron_pt[j] > lepton1_pt)
-                {
-                    lepton2_pt = lepton1_pt;
-                    lepton2_eta = lepton1_eta;
-                    lepton2_phi = lepton1_phi;
-                    lepton2_E = lepton1_E;
-                    lepton2_charge = lepton1_charge;
+                leptonM_pt[m_count]  = electron_pt[i];
+                leptonM_eta[m_count] = electron_eta[i];
+                leptonM_phi[m_count] = electron_phi[i];
+                leptonM_E[m_count]   = electron_E[i];
+                m_count++;
+            }
+        }
 
-                    lepton2filled = true;
+        UInt_t bestlepP;
+        UInt_t bestlepM;
+        Float_t bestPt = -1;
 
-                    lepton1_pt = electron_pt[j];
-                    lepton1_eta = electron_eta[j];
-                    lepton1_phi = electron_phi[j];
-                    lepton1_E = electron_E[j];
-                    lepton1_charge = electron_charge[j];
+        TLorentzVector leptonP, leptonM;
 
-                    lepton1filled = true;
-                }
-                else if (!lepton2filled)
-                {
-                    lepton2_pt = electron_pt[j];
-                    lepton2_eta = electron_eta[j];
-                    lepton2_phi = electron_phi[j];
-                    lepton2_E = electron_E[j];
-                    lepton2_charge = electron_charge[j];
+        for (int i = 0; i < p_count; i++) for (int j = 0; j < m_count; j++)
+        {
+            leptonP.set(leptonP_pt[i], leptonP_eta[i], leptonP_phi[i], leptonP_E[i]);
+            leptonM.set(leptonM_pt[j], leptonM_eta[j], leptonM_phi[j], leptonM_E[j]);
 
-                    lepton2filled = true;
-                }
-                else if (electron_pt[j] > lepton2_pt)
-                {
-                    lepton2_pt = electron_pt[j];
-                    lepton2_eta = electron_eta[j];
-                    lepton2_phi = electron_phi[j];
-                    lepton2_E = electron_E[j];
-                    lepton2_charge = electron_charge[j];
+            if ((leptonP + leptonM).Pt() > bestPt)
+            {
+                bestlepP = i;
+                bestlepM = j;
+                bestPt   = (leptonP + leptonM).Pt();
+            }
+        }
 
-                    lepton2filled = true;
-                }
+        if (bestPt > 0)
+        {
+            if (leptonP_pt[bestlepP] > leptonM_pt[bestlepM])
+            {
+                lepton1_pt  = leptonP_pt[bestlepP];
+                lepton1_eta = leptonP_eta[bestlepP];
+                lepton1_phi = leptonP_phi[bestlepP];
+                lepton1_E   = leptonP_E[bestlepP];
+                lepton1_charge = 1;
+
+                lepton2_pt  = leptonM_pt[bestlepM];
+                lepton2_eta = leptonM_eta[bestlepM];
+                lepton2_phi = leptonM_phi[bestlepM];
+                lepton2_E   = leptonM_E[bestlepM];
+                lepton2_charge = -1;
+            }
+            else
+            {
+                lepton1_pt  = leptonM_pt[bestlepM];
+                lepton1_eta = leptonM_eta[bestlepM];
+                lepton1_phi = leptonM_phi[bestlepM];
+                lepton1_E   = leptonM_E[bestlepM];
+                lepton1_charge = -1;
+
+                lepton2_pt  = leptonP_pt[bestlepP];
+                lepton2_eta = leptonP_eta[bestlepP];
+                lepton2_phi = leptonP_phi[bestlepP];
+                lepton2_E   = leptonP_E[bestlepP];
+                lepton2_charge = 1;
             }
         }
 
