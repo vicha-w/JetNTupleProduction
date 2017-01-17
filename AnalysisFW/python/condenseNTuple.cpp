@@ -257,16 +257,18 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
             if (electron_charge[i] > 0) p_count++;
             else m_count++;
         }
+        
+        const UInt_t leptonSize = 16;
 
-        Float_t leptonP_pt[p_count];
-        Float_t leptonP_eta[p_count];
-        Float_t leptonP_phi[p_count];
-        Float_t leptonP_E[p_count];
+        Float_t leptonP_pt[leptonSize];
+        Float_t leptonP_eta[leptonSize];
+        Float_t leptonP_phi[leptonSize];
+        Float_t leptonP_E[leptonSize];
 
-        Float_t leptonM_pt[m_count];
-        Float_t leptonM_eta[m_count];
-        Float_t leptonM_phi[m_count];
-        Float_t leptonM_E[m_count];
+        Float_t leptonM_pt[leptonSize];
+        Float_t leptonM_eta[leptonSize];
+        Float_t leptonM_phi[leptonSize];
+        Float_t leptonM_E[leptonSize];
 
         p_count = 0;
         m_count = 0;
