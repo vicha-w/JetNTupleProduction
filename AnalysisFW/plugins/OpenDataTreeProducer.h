@@ -49,7 +49,6 @@ class OpenDataTreeProducer : public edm::EDAnalyzer
     double          mGoodVtxZ; 
     edm::InputTag   mPFak5JetsName;
     edm::InputTag   mPFak7JetsName;
-
     
     // ---- PF Jet input tags ----- //
     edm::InputTag   mGenJetsName;
@@ -64,9 +63,19 @@ class OpenDataTreeProducer : public edm::EDAnalyzer
     edm::InputTag   mMuonName;
     edm::InputTag   mElectronName;
 
-    // ---- Lepton minimum criteria
-    double          mMinPtLeptons;
-    double          mMaxEtaLeptons;
+    // ---- Electorn selection criteria
+    double          mMinPtElectrons;
+    double          mMaxEtaElectrons;
+    double          mMaxREI;
+
+    // ---- Muon selection criteria
+    double          mMinPtMuons;
+    double          mMaxEtaMuons;
+    bool            mGlobalMuon;
+    bool            mTrackerMuon;
+    unsigned        mNumValidHitsMuon;
+    double          mChi2OverNdof;
+    double          mMaxRMI;
     
     //---- Trigger----------------------
     std::string                 processName_;

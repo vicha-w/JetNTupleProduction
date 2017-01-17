@@ -77,8 +77,18 @@ OpenDataTreeProducer::OpenDataTreeProducer(edm::ParameterSet const &cfg) {
   mElectronName      = cfg.getParameter<edm::InputTag>             ("electron");
   mBTagDiscriminator = cfg.getParameter<std::string>               ("bTagDiscriminator");
 
-  mMinPtLeptons      = cfg.getUntrackedParameter<double>                    ("minPtLeptons",20);
-  mMaxEtaLeptons     = cfg.getUntrackedParameter<double>                    ("maxEtaLeptons",2.4);
+
+  mMinPtElectrons    = cfg.getUntrackedParameter<double>           ("minPtElectrons",20);
+  mMaxEtaElectrons   = cfg.getUntrackedParameter<double>           ("maxEtaElectrons",2.5);
+  mMaxREI            = cfg.getUntrackedParameter<double>           ("REI",0.17);
+
+  mMinPtMuons        = cfg.getUntrackedParameter<double>           ("minPtMuons",20);
+  mMaxEtaMuons       = cfg.getUntrackedParameter<double>           ("maxEtaMuons",2.4);
+  mGlobalMuon        = cfg.getUntrackedParameter<bool>             ("globalMuon",true);
+  mTrackerMuon       = cfg.getUntrackedParameter<bool>             ("trackerMuon",true);
+  mNumValidHitsMuon  = cfg.getUntrackedParameter<unsigned>         ("numValidHitsMuon",10);
+  mChi2OverNdof      = cfg.getUntrackedParameter<double>           ("chi2OverNdofMuon",10.);
+  mMaxRMI            = cfg.getUntrackedParameter<double>           ("RMI",0.2);
 }
 
 
@@ -516,13 +526,20 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     // Muons first
     edm::Handle<std::vector<pat::Muon>> muon_handle;
     event_obj.getByLabel(mMuonName,muon_handle);
-    std::vector<pat::Muon> muons(muon_handle->begin(), muon_handle->end());
+    std::vector<reco::Muon> muons(muon_handle->begin(), muon_handle->end());
     int muon_index = 0;
     for (auto i_muon = muons.begin(); i_muon != muons.end(); i_muon++)
     {
+        if (!i_muon.isGlobalMuon() || !mGlobalMuon) continue;
+        if (!i_muon.isTrackerMuon() || !mTrackerMuon) continue;
+        if (i_muon.numberOfValidHits() < mNumValidHitsMuon) continue;
+        if (i_muon.normChi2()/i_muon.globalTrack().ndof() >= mChi2OverNdof) continue;
+        double RMI = (i_muon.chargedHadronIso() + i_muon.neutralHadronIso() + i_muon.photonIso() ) / i_muon.p4().Pt();
+        if (RMI >= mMaxRMI) continue;
+
         auto p4 = i_muon->p4();
-        if (p4.Pt() < mMinPtLeptons) continue;
-        if (p4.Eta() > mMaxEtaLeptons) continue;
+        if (p4.Pt() <= mMinPtMuons) continue;
+        if (p4.Eta() >= mMaxEtaMuons) continue;
         muon_pt[muon_index]   = p4.Pt();
         muon_eta[muon_index]  = p4.Eta();
         muon_phi[muon_index]  = p4.Phi();
@@ -541,9 +558,12 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     int electron_index = 0;
     for (auto i_electron = electrons.begin(); i_electron != electrons.end(); i_electron++)
     {
+        double REI = (i_electron.chargedHadronIso() + i_electron.neutralHadronIso() + i_electron.photonIso() ) / i_electron.p4().Pt();
+        if (REI >= mMaxREI) continue;
+
         auto p4 = i_electron->p4();
-        if (p4.Pt() < mMinPtLeptons) continue;
-        if (p4.Eta() > mMaxEtaLeptons) continue;
+        if (p4.Pt() <= mMinPtElectrons) continue;
+        if (p4.Eta() >= mMaxEtaElectrons) continue;
         electron_pt[electron_index]   = p4.Pt();
         electron_eta[electron_index]  = p4.Eta();
         electron_phi[electron_index]  = p4.Phi();

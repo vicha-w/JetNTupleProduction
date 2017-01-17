@@ -156,8 +156,18 @@ if not isMC:
         electron        = cms.InputTag('cleanPatElectrons'),
         bTagDiscriminator = cms.string('trackCountingHighEffBJetTags'),
 
-        minPtLeptons    = cms.untracked.double(20),
-        maxEtaLeptons   = cms.untracked.double(2.4)
+        minPtMuons      = cms.untracked.double(20),
+        maxEtaMuons     = cms.untracked.double(2.4),
+        globalMuon      = cms.untracked.bool(True),
+        trackerMuon     = cms.untracked.bool(True),
+        numValidHitsMuon= cms.untracked.unsigned(10),
+        chi2OverNdofMuon= cms.untracked.double(10.),
+        RMI             = cms.untracked.double(0.2),
+
+        minPtElectrons  = cms.untracked.double(20),
+        maxEtaElectrons = cms.untracked.double(2.5),
+        REI             = cms.untracked.double(0.17)
+
     )
 else:
     process.ak5ak7 = cms.EDAnalyzer('OpenDataTreeProducer',
@@ -195,8 +205,11 @@ else:
         electron        = cms.InputTag('cleanPatElectrons'),
         bTagDiscriminator = cms.string('trackCountingHighEffBJetTags'),
 
-        minPtLeptons    = cms.untracked.double(20),
-        maxEtaLeptons   = cms.untracked.double(2.4)
+        minPtMuons      = cms.untracked.double(20),
+        maxEtaMuons     = cms.untracked.double(2.4),
+
+        minPtElectrons  = cms.untracked.double(20),
+        maxEtaElectrons = cms.untracked.double(2.5)
     )
 
 # HLT filter
