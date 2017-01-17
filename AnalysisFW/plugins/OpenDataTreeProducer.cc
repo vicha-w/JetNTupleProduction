@@ -526,14 +526,14 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     // Muons first
     edm::Handle<std::vector<pat::Muon>> muon_handle;
     event_obj.getByLabel(mMuonName,muon_handle);
-    std::vector<reco::Muon> muons(muon_handle->begin(), muon_handle->end());
+    std::vector<pat::Muon> muons(muon_handle->begin(), muon_handle->end());
     int muon_index = 0;
     for (auto i_muon = muons.begin(); i_muon != muons.end(); i_muon++)
     {
         if (!i_muon->isGlobalMuon() || !mGlobalMuon) continue;
         if (!i_muon->isTrackerMuon() || !mTrackerMuon) continue;
         if (i_muon->numberOfValidHits() < mNumValidHitsMuon) continue;
-        if (i_muon->normChi2()/(i_muon->globalTrack()).ndof() >= mChi2OverNdof) continue;
+        if (i_muon->vertexNormalizedChi2() >= mChi2OverNdof) continue;
         double RMI = (i_muon->chargedHadronIso() + i_muon->neutralHadronIso() + i_muon->photonIso() ) / (i_muon->p4()).Pt();
         if (RMI >= mMaxRMI) continue;
 
