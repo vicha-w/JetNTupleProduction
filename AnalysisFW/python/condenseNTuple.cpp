@@ -273,7 +273,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
         p_count = 0;
         m_count = 0;
 
-        for (int i = 0; i < mu; i++)
+        for (int i = 0; i < nmu; i++)
         {
             if (muon_charge[i] > 0)
             {
@@ -293,7 +293,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
             }
         }
 
-        for (int i = 0; i < mu; i++)
+        for (int i = 0; i < nmu; i++)
         {
             if (electron_charge[i] > 0)
             {
@@ -321,8 +321,8 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
 
         for (int i = 0; i < p_count; i++) for (int j = 0; j < m_count; j++)
         {
-            leptonP.set(leptonP_pt[i], leptonP_eta[i], leptonP_phi[i], leptonP_E[i]);
-            leptonM.set(leptonM_pt[j], leptonM_eta[j], leptonM_phi[j], leptonM_E[j]);
+            leptonP.SetPtEtaPhiE(leptonP_pt[i], leptonP_eta[i], leptonP_phi[i], leptonP_E[i]);
+            leptonM.SetPtEtaPhiE(leptonM_pt[j], leptonM_eta[j], leptonM_phi[j], leptonM_E[j]);
 
             if ((leptonP + leptonM).Pt() > bestPt)
             {
