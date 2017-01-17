@@ -257,6 +257,8 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
             if (electron_charge[i] > 0) p_count++;
             else m_count++;
         }
+
+        if (p_count == 0 || m_count == 0) continue;
         
         const UInt_t leptonSize = 16;
 
