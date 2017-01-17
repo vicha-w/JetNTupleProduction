@@ -530,11 +530,11 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     int muon_index = 0;
     for (auto i_muon = muons.begin(); i_muon != muons.end(); i_muon++)
     {
-        if (!i_muon.isGlobalMuon() || !mGlobalMuon) continue;
-        if (!i_muon.isTrackerMuon() || !mTrackerMuon) continue;
-        if (i_muon.numberOfValidHits() < mNumValidHitsMuon) continue;
-        if (i_muon.normChi2()/i_muon.globalTrack().ndof() >= mChi2OverNdof) continue;
-        double RMI = (i_muon.chargedHadronIso() + i_muon.neutralHadronIso() + i_muon.photonIso() ) / i_muon.p4().Pt();
+        if (!i_muon->isGlobalMuon() || !mGlobalMuon) continue;
+        if (!i_muon->isTrackerMuon() || !mTrackerMuon) continue;
+        if (i_muon->numberOfValidHits() < mNumValidHitsMuon) continue;
+        if (i_muon->normChi2()/(i_muon->globalTrack()).ndof() >= mChi2OverNdof) continue;
+        double RMI = (i_muon->chargedHadronIso() + i_muon->neutralHadronIso() + i_muon->photonIso() ) / (i_muon->p4()).Pt();
         if (RMI >= mMaxRMI) continue;
 
         auto p4 = i_muon->p4();
@@ -558,7 +558,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     int electron_index = 0;
     for (auto i_electron = electrons.begin(); i_electron != electrons.end(); i_electron++)
     {
-        double REI = (i_electron.chargedHadronIso() + i_electron.neutralHadronIso() + i_electron.photonIso() ) / i_electron.p4().Pt();
+        double REI = (i_electron->chargedHadronIso() + i_electron->neutralHadronIso() + i_electron->photonIso() ) / (i_electron->p4()).Pt();
         if (REI >= mMaxREI) continue;
 
         auto p4 = i_electron->p4();
