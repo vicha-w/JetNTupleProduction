@@ -254,7 +254,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
         
         for (int i = 0; i < nele; i++)
         {
-            if (electron_charge[i] > 0) p_count
+            if (electron_charge[i] > 0) p_count++;
             else m_count++;
         }
 
