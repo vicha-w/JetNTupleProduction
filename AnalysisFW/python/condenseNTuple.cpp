@@ -82,12 +82,14 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
     Float_t lepton1_phi;
     Float_t lepton1_E;
     Int_t lepton1_charge;
+    Bool_t lepton1_isMuon;
 
     Float_t lepton2_pt;
     Float_t lepton2_eta;
     Float_t lepton2_phi;
     Float_t lepton2_E;
     Int_t lepton2_charge;
+    Bool_t lepton2_isMuon;
 
     outTree.Branch("jet1_pt",&jet1_pt,"jet1_pt/F");
     outTree.Branch("jet1_eta",&jet1_eta,"jet1_eta/F");
@@ -106,12 +108,14 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
     outTree.Branch("lepton1_phi",&lepton1_phi,"lepton1_phi/F");
     outTree.Branch("lepton1_E",&lepton1_E,"lepton1_E/F");
     outTree.Branch("lepton1_charge",&lepton1_charge,"lepton1_charge/I");
+    outTree.Branch("lepton1_isMuon",&lepton1_isMuon,"lepton1_isMuon/O");
 
     outTree.Branch("lepton2_pt",&lepton2_pt,"lepton2_pt/F");
     outTree.Branch("lepton2_eta",&lepton2_eta,"lepton2_eta/F");
     outTree.Branch("lepton2_phi",&lepton2_phi,"lepton2_phi/F");
     outTree.Branch("lepton2_E",&lepton2_E,"lepton2_E/F");
     outTree.Branch("lepton2_charge",&lepton2_charge,"lepton2_charge/I");
+    outTree.Branch("lepton2_isMuon",&lepton2_isMuon,"lepton2_isMuon/O");
 
     outTree.Branch("met_pt",&met_pt,"met_pt/F");
     //outTree.Branch("met_eta",&met_eta,"met_eta/F");
@@ -266,11 +270,13 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
         Float_t leptonP_eta[leptonSize];
         Float_t leptonP_phi[leptonSize];
         Float_t leptonP_E[leptonSize];
+        Bool_t  leptonP_isMuon[leptonSize];
 
         Float_t leptonM_pt[leptonSize];
         Float_t leptonM_eta[leptonSize];
         Float_t leptonM_phi[leptonSize];
         Float_t leptonM_E[leptonSize];
+        Bool_t  leptonM_isMuon[leptonSize];
 
         p_count = 0;
         m_count = 0;
@@ -283,6 +289,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                 leptonP_eta[p_count] = muon_eta[i];
                 leptonP_phi[p_count] = muon_phi[i];
                 leptonP_E[p_count]   = muon_E[i];
+                leptonP_isMuon[p_count] = true;
                 p_count++;
             }
             else
@@ -291,11 +298,12 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                 leptonM_eta[m_count] = muon_eta[i];
                 leptonM_phi[m_count] = muon_phi[i];
                 leptonM_E[m_count]   = muon_E[i];
+                leptonM_isMuon[p_count] = true;
                 m_count++;
             }
         }
 
-        for (int i = 0; i < nmu; i++)
+        for (int i = 0; i < nele; i++)
         {
             if (electron_charge[i] > 0)
             {
@@ -303,6 +311,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                 leptonP_eta[p_count] = electron_eta[i];
                 leptonP_phi[p_count] = electron_phi[i];
                 leptonP_E[p_count]   = electron_E[i];
+                leptonP_isMuon[p_count] = false;
                 p_count++;
             }
             else
@@ -311,6 +320,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                 leptonM_eta[m_count] = electron_eta[i];
                 leptonM_phi[m_count] = electron_phi[i];
                 leptonM_E[m_count]   = electron_E[i];
+                leptonM_isMuon[p_count] = false;
                 m_count++;
             }
         }
@@ -342,12 +352,14 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                 lepton1_eta = leptonP_eta[bestlepP];
                 lepton1_phi = leptonP_phi[bestlepP];
                 lepton1_E   = leptonP_E[bestlepP];
+                lepton1_isMuon = leptonP_isMuon[bestlepP];
                 lepton1_charge = 1;
 
                 lepton2_pt  = leptonM_pt[bestlepM];
                 lepton2_eta = leptonM_eta[bestlepM];
                 lepton2_phi = leptonM_phi[bestlepM];
                 lepton2_E   = leptonM_E[bestlepM];
+                lepton2_isMuon = leptonM_isMuon[bestlepM];
                 lepton2_charge = -1;
             }
             else
@@ -356,12 +368,14 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                 lepton1_eta = leptonM_eta[bestlepM];
                 lepton1_phi = leptonM_phi[bestlepM];
                 lepton1_E   = leptonM_E[bestlepM];
+                lepton1_isMuon = leptonM_isMuon[bestlepP];
                 lepton1_charge = -1;
 
                 lepton2_pt  = leptonP_pt[bestlepP];
                 lepton2_eta = leptonP_eta[bestlepP];
                 lepton2_phi = leptonP_phi[bestlepP];
                 lepton2_E   = leptonP_E[bestlepP];
+                lepton2_isMuon = leptonP_isMuon[bestlepM];
                 lepton2_charge = 1;
             }
         }
