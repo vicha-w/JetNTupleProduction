@@ -118,9 +118,9 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
     outTree.Branch("met_phi",&met_phi,"met_phi/F");
 
     Long64_t nentries = tree->GetEntries();
-    for (Long64_t i = 0; i < nentries; i++)
+    for (Long64_t entry = 0; entry < nentries; entry++)
     {
-        tree->GetEntry(i);
+        tree->GetEntry(entry);
 
         if (njet < 2 || nele + nmu < 2) continue;
 
