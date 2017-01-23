@@ -90,7 +90,7 @@ OpenDataTreeProducer::OpenDataTreeProducer(edm::ParameterSet const &cfg) {
   mGlobalMuon        = cfg.getUntrackedParameter<bool>             ("globalMuon",true);
   mTrackerMuon       = cfg.getUntrackedParameter<bool>             ("trackerMuon",true);
   mMuonID            = cfg.getParameter<std::string>               ("muonID");
-  mNumValidHitsMuon  = cfg.getUntrackedParameter<unsigned>         ("numValidHitsMuon",10);
+  mNumValidHitsMuon  = cfg.getUntrackedParameter<int>              ("numValidHitsMuon",10);
   mChi2OverNdof      = cfg.getUntrackedParameter<double>           ("chi2OverNdofMuon",10.);
   mMuonTIP           = cfg.getUntrackedParameter<double>           ("muonTIP",0.02);
   mMaxRMI            = cfg.getUntrackedParameter<double>           ("RMI",0.2);

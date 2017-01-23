@@ -77,7 +77,7 @@ class OpenDataTreeProducer : public edm::EDAnalyzer
     bool            mGlobalMuon;
     bool            mTrackerMuon;
     std::string     mMuonID;
-    unsigned        mNumValidHitsMuon;
+    int             mNumValidHitsMuon;
     double          mChi2OverNdof;
     double          mMuonTIP; // Muon transverse impact parameter
     double          mMaxRMI;
