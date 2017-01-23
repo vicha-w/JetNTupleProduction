@@ -578,8 +578,9 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         for (auto i_muon = muons.begin(); i_muon != muons.end(); i_muon++)
         {
             if (i_muon->numberOfValidHits() <= mNumValidHitsMuon) continue;
-            TLorentzVector muonP4 = i_muon->p4();
-            if (muonP4.DeltaR(electronP4) <= mElectronDeltaR) deltaRPassed = false;
+            auto muonP4 = i_muon->p4();
+            double deltaR = reco::deltaR(muonP4.Eta(), muonP4.Phi(), electronP4.Eta(), electronP4.Phi());
+            if (deltaR <= mElectronDeltaR) deltaRPassed = false;
         }
         if (!deltaRPassed) continue;
 
