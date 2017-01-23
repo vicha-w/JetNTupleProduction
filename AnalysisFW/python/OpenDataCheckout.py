@@ -4,10 +4,11 @@
 
 ## Custom switches
 
-isMC = False # MC or data
-customGlobalTag = ''
+isMC = True # MC or data
+customGlobalTag = 'START53_LV6::All'
 customIndexFile = ''
 customOutFileName = ''
+customBTagDiscrim = 'combinedSecondaryVertexBJetTags'
 
 numberOfEvents = -1
 
@@ -154,13 +155,13 @@ if not isMC:
 
         muon            = cms.InputTag('cleanPatMuons'),
         electron        = cms.InputTag('cleanPatElectrons'),
-        bTagDiscriminator = cms.string('trackCountingHighEffBJetTags'),
+        bTagDiscriminator = cms.string(customBTagDiscrim),
 
         minPtMuons      = cms.untracked.double(20),
         maxEtaMuons     = cms.untracked.double(2.4),
         globalMuon      = cms.untracked.bool(True),
         trackerMuon     = cms.untracked.bool(True),
-        numValidHitsMuon= cms.untracked.int(10),
+        numValidHitsMuon= cms.untracked.int32(10),
         chi2OverNdofMuon= cms.untracked.double(10.),
         muonID          = cms.string('GlobalMuonPromptTight'),
         muonTIP         = cms.untracked.double(0.04),
@@ -207,13 +208,13 @@ else:
 
         muon            = cms.InputTag('cleanPatMuons'),
         electron        = cms.InputTag('cleanPatElectrons'),
-        bTagDiscriminator = cms.string('trackCountingHighEffBJetTags'),
+        bTagDiscriminator = cms.string(customBTagDiscrim),
 
         minPtMuons      = cms.untracked.double(20),
         maxEtaMuons     = cms.untracked.double(2.4),
         globalMuon      = cms.untracked.bool(True),
         trackerMuon     = cms.untracked.bool(True),
-        numValidHitsMuon= cms.untracked.int(10),
+        numValidHitsMuon= cms.untracked.int32(10),
         chi2OverNdofMuon= cms.untracked.double(10.),
         muonID          = cms.string('GlobalMuonPromptTight'),
         muonTIP         = cms.untracked.double(0.04),
