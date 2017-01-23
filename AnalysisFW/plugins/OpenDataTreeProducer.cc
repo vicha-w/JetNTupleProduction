@@ -537,7 +537,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     {
         if (!i_muon->isGlobalMuon() || !mGlobalMuon) continue;
         if (!i_muon->isTrackerMuon() || !mTrackerMuon) continue;
-        if (!i_muon->muonID(mMuonID)) continue;
+        //if (!i_muon->muonID(mMuonID)) continue;
         if (i_muon->numberOfValidHits() < mNumValidHitsMuon) continue;
         if (i_muon->vertexNormalizedChi2() >= mChi2OverNdof) continue;
         if (i_muon->dB(pat::Muon::BS3D) >= mMuonTIP) continue;
