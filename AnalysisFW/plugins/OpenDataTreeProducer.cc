@@ -538,7 +538,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         if (!i_muon->isGlobalMuon() || !mGlobalMuon) continue;
         if (!i_muon->isTrackerMuon() || !mTrackerMuon) continue;
         //if (!i_muon->muonID(mMuonID)) continue;
-        if (i_muon->numberOfValidHits() < mNumValidHitsMuon) continue;
+        if (i_muon->numberOfValidHits() < (unsigned) mNumValidHitsMuon) continue;
         if (i_muon->vertexNormalizedChi2() >= mChi2OverNdof) continue;
         //if (i_muon->dB(pat::Muon::BS3D) >= mMuonTIP) continue;
         double RMI = (i_muon->chargedHadronIso() + i_muon->neutralHadronIso() + i_muon->photonIso() ) / (i_muon->p4()).Pt();
@@ -577,7 +577,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         bool deltaRPassed = true;
         for (auto i_muon = muons.begin(); i_muon != muons.end(); i_muon++)
         {
-            if (i_muon->numberOfValidHits() <= mNumValidHitsMuon) continue;
+            if (i_muon->numberOfValidHits() <= (unsigned) mNumValidHitsMuon) continue;
             auto muonP4 = i_muon->p4();
             double deltaR = reco::deltaR(muonP4.Eta(), muonP4.Phi(), electronP4.Eta(), electronP4.Phi());
             if (deltaR <= mElectronDeltaR) deltaRPassed = false;
