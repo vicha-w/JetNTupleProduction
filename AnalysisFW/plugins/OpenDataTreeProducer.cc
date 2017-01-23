@@ -80,14 +80,19 @@ OpenDataTreeProducer::OpenDataTreeProducer(edm::ParameterSet const &cfg) {
 
   mMinPtElectrons    = cfg.getUntrackedParameter<double>           ("minPtElectrons",20);
   mMaxEtaElectrons   = cfg.getUntrackedParameter<double>           ("maxEtaElectrons",2.5);
+  mElectronID        = cfg.getParameter<std::string>               ("electronID");
+  mElectronTIP       = cfg.getUntrackedParameter<double>           ("electronTIP",0.04);
+  mElectronDeltaR    = cfg.getUntrackedParameter<double>           ("electronDeltaR",0.1);
   mMaxREI            = cfg.getUntrackedParameter<double>           ("REI",0.17);
 
   mMinPtMuons        = cfg.getUntrackedParameter<double>           ("minPtMuons",20);
   mMaxEtaMuons       = cfg.getUntrackedParameter<double>           ("maxEtaMuons",2.4);
   mGlobalMuon        = cfg.getUntrackedParameter<bool>             ("globalMuon",true);
   mTrackerMuon       = cfg.getUntrackedParameter<bool>             ("trackerMuon",true);
+  mMuonID            = cfg.getParameter<std::string>               ("muonID");
   mNumValidHitsMuon  = cfg.getUntrackedParameter<unsigned>         ("numValidHitsMuon",10);
   mChi2OverNdof      = cfg.getUntrackedParameter<double>           ("chi2OverNdofMuon",10.);
+  mMuonTIP           = cfg.getUntrackedParameter<double>           ("muonTIP",0.02);
   mMaxRMI            = cfg.getUntrackedParameter<double>           ("RMI",0.2);
 }
 
@@ -532,18 +537,20 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     {
         if (!i_muon->isGlobalMuon() || !mGlobalMuon) continue;
         if (!i_muon->isTrackerMuon() || !mTrackerMuon) continue;
+        if (!i_muon->muonID(mMuonID)) continue;
         if (i_muon->numberOfValidHits() < mNumValidHitsMuon) continue;
         if (i_muon->vertexNormalizedChi2() >= mChi2OverNdof) continue;
+        if (i_muon->dB(pat::Muon::BS3D) >= mMuonTIP) continue;
         double RMI = (i_muon->chargedHadronIso() + i_muon->neutralHadronIso() + i_muon->photonIso() ) / (i_muon->p4()).Pt();
         if (RMI >= mMaxRMI) continue;
 
-        auto p4 = i_muon->p4();
-        if (p4.Pt() <= mMinPtMuons) continue;
-        if (p4.Eta() >= mMaxEtaMuons) continue;
-        muon_pt[muon_index]   = p4.Pt();
-        muon_eta[muon_index]  = p4.Eta();
-        muon_phi[muon_index]  = p4.Phi();
-        muon_E[muon_index]    = p4.E();
+        auto muonP4 = i_muon->p4();
+        if (muonP4.Pt() <= mMinPtMuons) continue;
+        if (muonP4.Eta() >= mMaxEtaMuons) continue;
+        muon_pt[muon_index]   = muonP4.Pt();
+        muon_eta[muon_index]  = muonP4.Eta();
+        muon_phi[muon_index]  = muonP4.Phi();
+        muon_E[muon_index]    = muonP4.E();
 
         muon_charge[muon_index] = i_muon->charge();
 
@@ -558,16 +565,28 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     int electron_index = 0;
     for (auto i_electron = electrons.begin(); i_electron != electrons.end(); i_electron++)
     {
+        if (i_electron->dB(pat::Electron::BS3D) >=mElectronTIP) continue;
+        if (i_electron->electronID(mElectronID) < 6) continue;
         double REI = (i_electron->chargedHadronIso() + i_electron->neutralHadronIso() + i_electron->photonIso() ) / (i_electron->p4()).Pt();
         if (REI >= mMaxREI) continue;
 
-        auto p4 = i_electron->p4();
-        if (p4.Pt() <= mMinPtElectrons) continue;
-        if (p4.Eta() >= mMaxEtaElectrons) continue;
-        electron_pt[electron_index]   = p4.Pt();
-        electron_eta[electron_index]  = p4.Eta();
-        electron_phi[electron_index]  = p4.Phi();
-        electron_E[electron_index]    = p4.E();
+        auto electronP4 = i_electron->p4();
+        if (electronP4.Pt() <= mMinPtElectrons) continue;
+        if (electronP4.Eta() >= mMaxEtaElectrons) continue;
+
+        bool deltaRPassed = true;
+        for (auto i_muon = muons.begin(); i_muon != muons.end(); i_muon++)
+        {
+            if (i_muon->numberOfValidHits() <= mNumValidHitsMuon) continue;
+            TLorentzVector muonP4 = i_muon->p4();
+            if (muonP4.DeltaR(electronP4) <= mElectronDeltaR) deltaRPassed = false;
+        }
+        if (!deltaRPassed) continue;
+
+        electron_pt[electron_index]   = electronP4.Pt();
+        electron_eta[electron_index]  = electronP4.Eta();
+        electron_phi[electron_index]  = electronP4.Phi();
+        electron_E[electron_index]    = electronP4.E();
         
         electron_charge[electron_index] = i_electron->charge();
         

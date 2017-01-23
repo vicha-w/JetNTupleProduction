@@ -162,10 +162,14 @@ if not isMC:
         trackerMuon     = cms.untracked.bool(True),
         numValidHitsMuon= cms.untracked.unsigned(10),
         chi2OverNdofMuon= cms.untracked.double(10.),
-        RMI             = cms.untracked.double(0.2),
+        muonID          = cms.string('GlobalMuonPromptTight'),
+        muonTIP         = cms.untracked.double(0.04),
+        RMI             = cms.untracked.double(0.20),
 
         minPtElectrons  = cms.untracked.double(20),
         maxEtaElectrons = cms.untracked.double(2.5),
+        electronID      = cms.string('eidRobustLoose'),
+        electronTIP     = cms.untracked.double(0.04),
         REI             = cms.untracked.double(0.17)
 
     )
@@ -207,9 +211,19 @@ else:
 
         minPtMuons      = cms.untracked.double(20),
         maxEtaMuons     = cms.untracked.double(2.4),
+        globalMuon      = cms.untracked.bool(True),
+        trackerMuon     = cms.untracked.bool(True),
+        numValidHitsMuon= cms.untracked.unsigned(10),
+        chi2OverNdofMuon= cms.untracked.double(10.),
+        muonID          = cms.string('GlobalMuonPromptTight'),
+        muonTIP         = cms.untracked.double(0.04),
+        RMI             = cms.untracked.double(0.20),
 
         minPtElectrons  = cms.untracked.double(20),
-        maxEtaElectrons = cms.untracked.double(2.5)
+        maxEtaElectrons = cms.untracked.double(2.5),
+        electronID      = cms.string('eidRobustLoose'),
+        electronTIP     = cms.untracked.double(0.04),
+        REI             = cms.untracked.double(0.17)
     )
 
 # HLT filter

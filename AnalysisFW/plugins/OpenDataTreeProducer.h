@@ -66,6 +66,9 @@ class OpenDataTreeProducer : public edm::EDAnalyzer
     // ---- Electorn selection criteria
     double          mMinPtElectrons;
     double          mMaxEtaElectrons;
+    double          mElectronTIP; // Electron transverse impact parameter
+    std::string     mElectronID;
+    double          mElectronDeltaR;
     double          mMaxREI;
 
     // ---- Muon selection criteria
@@ -73,8 +76,10 @@ class OpenDataTreeProducer : public edm::EDAnalyzer
     double          mMaxEtaMuons;
     bool            mGlobalMuon;
     bool            mTrackerMuon;
+    std::string     mMuonID;
     unsigned        mNumValidHitsMuon;
     double          mChi2OverNdof;
+    double          mMuonTIP; // Muon transverse impact parameter
     double          mMaxRMI;
     
     //---- Trigger----------------------
