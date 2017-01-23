@@ -566,7 +566,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     for (auto i_electron = electrons.begin(); i_electron != electrons.end(); i_electron++)
     {
         if (i_electron->dB(pat::Electron::BS3D) >=mElectronTIP) continue;
-        if (i_electron->electronID(mElectronID) < 6) continue;
+        //if (i_electron->electronID(mElectronID) < 6) continue;
         double REI = (i_electron->chargedHadronIso() + i_electron->neutralHadronIso() + i_electron->photonIso() ) / (i_electron->p4()).Pt();
         if (REI >= mMaxREI) continue;
 
