@@ -558,7 +558,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
 
         muon_charge[muon_index] = i_muon->charge();
         
-        muon_ID[muon_index] = i_muon->muonID();
+        muon_ID[muon_index] = i_muon->muonID(mMuonID);
         muon_TIP[muon_index] = i_muon->dB(pat::Muon::BS3D);
 
         muon_index++;
