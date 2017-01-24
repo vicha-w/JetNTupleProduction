@@ -537,10 +537,10 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     {
         if (!i_muon->isGlobalMuon() || !mGlobalMuon) continue;
         if (!i_muon->isTrackerMuon() || !mTrackerMuon) continue;
-        //if (!i_muon->muonID(mMuonID)) continue;
+        if (!i_muon->muonID(mMuonID)) continue;
         if (i_muon->numberOfValidHits() < (unsigned) mNumValidHitsMuon) continue;
         if (i_muon->vertexNormalizedChi2() >= mChi2OverNdof) continue;
-        //if (i_muon->dB(pat::Muon::BS3D) >= mMuonTIP) continue;
+        if (i_muon->dB(pat::Muon::BS3D) >= mMuonTIP) continue;
         double RMI = (i_muon->chargedHadronIso() + i_muon->neutralHadronIso() + i_muon->photonIso() ) / (i_muon->p4()).Pt();
         if (RMI >= mMaxRMI) continue;
 
@@ -565,8 +565,8 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     int electron_index = 0;
     for (auto i_electron = electrons.begin(); i_electron != electrons.end(); i_electron++)
     {
-        //if (i_electron->dB(pat::Electron::BS3D) >=mElectronTIP) continue;
-        //if (i_electron->electronID(mElectronID) < 6) continue;
+        if (i_electron->dB(pat::Electron::BS3D) >=mElectronTIP) continue;
+        if (i_electron->electronID(mElectronID) < 6) continue;
         double REI = (i_electron->chargedHadronIso() + i_electron->neutralHadronIso() + i_electron->photonIso() ) / (i_electron->p4()).Pt();
         if (REI >= mMaxREI) continue;
 
