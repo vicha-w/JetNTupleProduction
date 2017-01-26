@@ -528,7 +528,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     met = (*met_handle)[0].et();
     sumet = (*met_handle)[0].sumEt();
 
-    auto met_p4 = (*met_handle)[0].p4();
+    //auto met_p4 = (*met_handle)[0].p4();
     met_et = (*met_handle)[0].et();
     met_phi = (*met_handle)[0].phi();
 
