@@ -170,8 +170,7 @@ class OpenDataTreeProducer : public edm::EDAnalyzer
     Float_t mcweight;
     
     // Detailed MET
-    Float_t met_pt;
-    Float_t met_eta;
+    Float_t met_et;
     Float_t met_phi;
 
     // Muons

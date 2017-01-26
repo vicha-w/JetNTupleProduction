@@ -160,8 +160,8 @@ void OpenDataTreeProducer::beginJob() {
 */
 
     // METs
-    mTree->Branch("met_pt",&met_pt,"met_pt/F");
-    mTree->Branch("met_eta",&met_eta,"met_eta/F");
+    mTree->Branch("met_et",&met_et,"met_et/F");
+    //mTree->Branch("met_eta",&met_eta,"met_eta/F");
     mTree->Branch("met_phi",&met_phi,"met_phi/F");
 
     // Muon and electron variables
@@ -338,9 +338,9 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     {
 
         // Skip the current iteration if jet is not selected
-        if (!i_ak5jet->isPFJet() || 
-            fabs(i_ak5jet->y()) > mMaxY || 
-            (i_ak5jet->pt()) < mMinPFPtJets) {
+        if (!i_ak5jet->isPFJet() || // Is this jet a PF jet?
+            fabs(i_ak5jet->y()) > mMaxY || // jet rapidity
+            (i_ak5jet->pt()) < mMinPFPtJets) { // jet Pt
             continue;
         }
 
@@ -356,7 +356,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         // Loop over tracks of the jet
         for(auto i_trk = tracks.begin(); i_trk != tracks.end(); i_trk++) {
 
-            if (recVtxs->size() == 0) break;
+            if (recVtxs->size() == 0) break; // No vertex?
             
             // Sum pT
             sumTrkPt += (*i_trk)->pt();
@@ -366,7 +366,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
                 reco::Vertex vertex = (*recVtxs)[ivtx];
 
                 // Loop over tracks associated with the vertex
-                if (!(vertex.isFake()) && 
+                if (!(vertex.isFake()) && // not a fake vertex?
                     vertex.ndof() >= mGoodVtxNdof && 
                     fabs(vertex.z()) <= mGoodVtxZ) {
                     
@@ -463,6 +463,8 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     // Number of selected jets in the event
     njet = ak5_index;    
 
+    //! Here we are interested in ak5 jets only.
+    //! Subject to cleanup.
 
     // Four leading AK7 Jets
     edm::Handle< std::vector< pat::Jet > > ak7_handle;
@@ -527,9 +529,11 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     sumet = (*met_handle)[0].sumEt();
 
     auto met_p4 = (*met_handle)[0].p4();
-    met_pt = met_p4.Pt();
-    met_eta = met_p4.Eta();
-    met_phi = met_p4.Phi();
+    met_et = (*met_handle)[0].et();
+    met_phi = (*met_handle)[0].phi();
+
+    // MET selection cut at et > 40.
+    if (met_et <= 40.) continue;
 
     // Leptons
     // Muons first
@@ -539,6 +543,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     int muon_index = 0;
     for (auto i_muon = muons.begin(); i_muon != muons.end(); i_muon++)
     {
+        /*
         if (!i_muon->isGlobalMuon() || !mGlobalMuon) continue;
         if (!i_muon->isTrackerMuon() || !mTrackerMuon) continue;
         //if (!i_muon->muonID(mMuonID)) continue;
@@ -547,10 +552,27 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         //if (i_muon->dB(pat::Muon::BS3D) >= mMuonTIP) continue;
         double RMI = (i_muon->chargedHadronIso() + i_muon->neutralHadronIso() + i_muon->photonIso() ) / (i_muon->p4()).Pt();
         if (RMI >= mMaxRMI) continue;
+        */
+
+        // Tight Muon criteria
+        // See https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMuonId#The2011Data
+        // "Baseline muon selections for 2011 data (CMSSW 44X and below)"
+        if (!i_muon.isGlobalMuon()) continue;
+        //if (!i_muon.isPFMuon()) continue; // required in 2012 data
+        if (i_muon.globalTrack()->normalizedChi2() >= 10.) continue;
+        if (i_muon.globalTrack()->hitPattern().numberOfValidMuonHits() <= 0) continue;
+        if (i_muon.numberOfMatchedStations() <= 1) continue;
+        if (i_muon.dB() >= 0.2) continue;
+        //if (fabs(i_muon.muonBestTrack()->dz(i_muon.vertex()->position())) >= 0.2) continue; // required in 2012 data
+        if (i_muon.innerTrack()->hitPattern().numberOfValidPixelHits() <= 0) continue;
+        if (i_muon.innerTrack()->hitPattern().trackerLayersWithMeasurement() <= 5) continue;
+
+        // REMARKS:
+        // Does i_muon.vertex() give out primary vertex?
 
         auto muonP4 = i_muon->p4();
-        if (muonP4.Pt() <= mMinPtMuons) continue;
-        if (muonP4.Eta() >= mMaxEtaMuons) continue;
+        if (muonP4.Pt() <= 20.) continue;
+        if (fabs(muonP4.Eta()) >= 2.5) continue;
         muon_pt[muon_index]   = muonP4.Pt();
         muon_eta[muon_index]  = muonP4.Eta();
         muon_phi[muon_index]  = muonP4.Phi();
@@ -559,7 +581,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         muon_charge[muon_index] = i_muon->charge();
         
         muon_ID[muon_index] = i_muon->muonID(mMuonID);
-        muon_TIP[muon_index] = i_muon->dB(pat::Muon::BS3D);
+        muon_TIP[muon_index] = i_muon->dB(pat::Muon::BS2D);
 
         muon_index++;
     }
@@ -572,8 +594,11 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     int electron_index = 0;
     for (auto i_electron = electrons.begin(); i_electron != electrons.end(); i_electron++)
     {
+        /*
         //if (i_electron->dB(pat::Electron::BS3D) >=mElectronTIP) continue;
         //if (i_electron->electronID(mElectronID) < 6) continue;
+        if (i_electron->gsfTrack()->trackerExpectedHitsInner().numberOfLostHits() >= 2) continue;
+        
         double REI = (i_electron->chargedHadronIso() + i_electron->neutralHadronIso() + i_electron->photonIso() ) / (i_electron->p4()).Pt();
         if (REI >= mMaxREI) continue;
 
@@ -590,6 +615,53 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
             if (deltaR <= mElectronDeltaR) deltaRPassed = false;
         }
         if (!deltaRPassed) continue;
+        */
+
+        // Electron criteria
+
+        // Transverse IP of the electron (GSF track)
+        if (fabs(i_electron.gsfTrack()->dxy(i_electron.vertex()->position()) >= 0.04) continue;
+        // Conversion rejection
+        if (!i_electron.passConversionVeto()) continue;
+        // MVA
+        if (i_electron.electronID("mvaTrigV0") <= 0.5) continue;
+        // mHits
+        if (i_electron.gsfTrack()->trackerExpectedHitsInner().numberOfHits() > 0) continue;
+        // Missing relIso (r=0.3) with Rho corrections
+
+        // Simple tight cut
+        auto electronP4 = i_electron->p4();
+        if (electronP4.Pt() <= 20.) continue;
+        if (fabs(electronP4.Eta()) <= 1.479)
+        {
+            if (fabs(i_electron.deltaEtaSuperClusterTrackAtVtx()) >= 0.004) continue; // dEtaIn
+            if (fabs(i_electron.deltaPhiSuperClusterTrackAtVtx()) >= 0.03) continue; // dPhiIn
+            if (i_electron.sigmaIetaIeta() >= 0.01) continue; // sigmaIEtaIEta
+            if (i_electron.hadronicOverEm() >= 0.12) continue;// H/E
+            //if (fabs() >= 0.02) continue;// d0 vtx
+            //if (fabs() >= 0.1) continue;// dZ vtx
+            if (fabs( 1./i_electron.ecalEnergy() - 1./i_electron.trackMomentumAtVtx().p()) >= 0.05) continue;// 1/E - 1/p
+            //if ( >= 0.10) continue; // PF isolation / pT 
+            // conversion rejection: vertex fit probability
+            //if ( > 0) continue; // Conversion rejection: missing hits
+        }
+        else if (fabs(electronP4.Eta()) < 2.5)
+        {
+            if (fabs(i_electron.deltaEtaSuperClusterTrackAtVtx()) >= 0.005) continue; // dEtaIn
+            if (fabs(i_electron.deltaPhiSuperClusterTrackAtVtx()) >= 0.02) continue; // dPhiIn
+            if (i_electron.sigmaIetaIeta() >= 0.03) continue; // sigmaIEtaIEta
+            if (i_electron.hadronicOverEm() >= 0.10) continue;// H/E
+            //if (fabs() >= 0.02) continue;// d0 vtx
+            //if (fabs() >= 0.1) continue;// dZ vtx
+            if (fabs( 1./i_electron.ecalEnergy() - 1./i_electron.trackMomentumAtVtx().p()) >= 0.05) continue;// 1/E - 1/p
+            //if ( >= 0.10) continue; // PF isolation / pT 
+            // conversion rejection: vertex fit probability
+            //if ( > 0) continue; // Conversion rejection: missing hits
+        }
+        else continue;
+
+        // REMARKS:
+        // What is relIso?
 
         electron_pt[electron_index]   = electronP4.Pt();
         electron_eta[electron_index]  = electronP4.Eta();
@@ -598,8 +670,8 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         
         electron_charge[electron_index] = i_electron->charge();
 
-        electron_ID[electron_index] = i_electron->electronID(mElectronID);
-        electron_TIP[electron_index] = i_electron->dB(pat::Electron::BS3D);
+        //electron_ID[electron_index] = i_electron->electronID(mElectronID);
+        electron_TIP[electron_index] = i_electron->dB(pat::Electron::BS2D);
         
         electron_index++;
     }
