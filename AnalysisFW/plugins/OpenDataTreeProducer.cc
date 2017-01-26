@@ -620,7 +620,12 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         // Electron criteria
 
         // Transverse IP of the electron (GSF track)
-        if (fabs(i_electron->gsfTrack()->dxy(i_electron->vertex()->position()) >= 0.04)) continue;
+        //if (fabs(i_electron->gsfTrack()->dxy(i_electron->vertex()->position()) >= 0.04)) continue;
+        // Turned off due to following error:
+        // OpenDataTreeProducer.cc:623:66: error: base operand of '->' has non-pointer type 
+        // 'const Point {aka const ROOT::Math::PositionVector3D<ROOT::Math::Cartesian3D<double>, 
+        // ROOT::Math::DefaultCoordinateSystemTag>}'
+
         // Conversion rejection
         if (!i_electron->passConversionVeto()) continue;
         // MVA
