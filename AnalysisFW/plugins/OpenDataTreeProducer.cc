@@ -533,7 +533,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     met_phi = (*met_handle)[0].phi();
 
     // MET selection cut at et > 40.
-    if (met_et <= 40.) continue;
+    if (met_et <= 40.) return;
 
     // Leptons
     // Muons first
@@ -557,15 +557,15 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         // Tight Muon criteria
         // See https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMuonId#The2011Data
         // "Baseline muon selections for 2011 data (CMSSW 44X and below)"
-        if (!i_muon.isGlobalMuon()) continue;
+        if (!i_muon->isGlobalMuon()) continue;
         //if (!i_muon.isPFMuon()) continue; // required in 2012 data
-        if (i_muon.globalTrack()->normalizedChi2() >= 10.) continue;
-        if (i_muon.globalTrack()->hitPattern().numberOfValidMuonHits() <= 0) continue;
-        if (i_muon.numberOfMatchedStations() <= 1) continue;
-        if (i_muon.dB() >= 0.2) continue;
+        if (i_muon->globalTrack()->normalizedChi2() >= 10.) continue;
+        if (i_muon->globalTrack()->hitPattern().numberOfValidMuonHits() <= 0) continue;
+        if (i_muon->numberOfMatchedStations() <= 1) continue;
+        if (i_muon->dB() >= 0.2) continue;
         //if (fabs(i_muon.muonBestTrack()->dz(i_muon.vertex()->position())) >= 0.2) continue; // required in 2012 data
-        if (i_muon.innerTrack()->hitPattern().numberOfValidPixelHits() <= 0) continue;
-        if (i_muon.innerTrack()->hitPattern().trackerLayersWithMeasurement() <= 5) continue;
+        if (i_muon->innerTrack()->hitPattern().numberOfValidPixelHits() <= 0) continue;
+        if (i_muon->innerTrack()->hitPattern().trackerLayersWithMeasurement() <= 5) continue;
 
         // REMARKS:
         // Does i_muon.vertex() give out primary vertex?
@@ -620,13 +620,13 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         // Electron criteria
 
         // Transverse IP of the electron (GSF track)
-        if (fabs(i_electron.gsfTrack()->dxy(i_electron.vertex()->position()) >= 0.04) continue;
+        if (fabs(i_electron->gsfTrack()->dxy(i_electron.vertex()->position()) >= 0.04) continue;
         // Conversion rejection
-        if (!i_electron.passConversionVeto()) continue;
+        if (!i_electron->passConversionVeto()) continue;
         // MVA
-        if (i_electron.electronID("mvaTrigV0") <= 0.5) continue;
+        if (i_electron->electronID("mvaTrigV0") <= 0.5) continue;
         // mHits
-        if (i_electron.gsfTrack()->trackerExpectedHitsInner().numberOfHits() > 0) continue;
+        if (i_electron->gsfTrack()->trackerExpectedHitsInner().numberOfHits() > 0) continue;
         // Missing relIso (r=0.3) with Rho corrections
 
         // Simple tight cut
@@ -634,26 +634,26 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         if (electronP4.Pt() <= 20.) continue;
         if (fabs(electronP4.Eta()) <= 1.479)
         {
-            if (fabs(i_electron.deltaEtaSuperClusterTrackAtVtx()) >= 0.004) continue; // dEtaIn
-            if (fabs(i_electron.deltaPhiSuperClusterTrackAtVtx()) >= 0.03) continue; // dPhiIn
-            if (i_electron.sigmaIetaIeta() >= 0.01) continue; // sigmaIEtaIEta
-            if (i_electron.hadronicOverEm() >= 0.12) continue;// H/E
+            if (fabs(i_electron->deltaEtaSuperClusterTrackAtVtx()) >= 0.004) continue; // dEtaIn
+            if (fabs(i_electron->deltaPhiSuperClusterTrackAtVtx()) >= 0.03) continue; // dPhiIn
+            if (i_electron->sigmaIetaIeta() >= 0.01) continue; // sigmaIEtaIEta
+            if (i_electron->hadronicOverEm() >= 0.12) continue;// H/E
             //if (fabs() >= 0.02) continue;// d0 vtx
             //if (fabs() >= 0.1) continue;// dZ vtx
-            if (fabs( 1./i_electron.ecalEnergy() - 1./i_electron.trackMomentumAtVtx().p()) >= 0.05) continue;// 1/E - 1/p
+            if (fabs( 1./i_electron->ecalEnergy() - 1./i_electron->trackMomentumAtVtx().p()) >= 0.05) continue;// 1/E - 1/p
             //if ( >= 0.10) continue; // PF isolation / pT 
             // conversion rejection: vertex fit probability
             //if ( > 0) continue; // Conversion rejection: missing hits
         }
         else if (fabs(electronP4.Eta()) < 2.5)
         {
-            if (fabs(i_electron.deltaEtaSuperClusterTrackAtVtx()) >= 0.005) continue; // dEtaIn
-            if (fabs(i_electron.deltaPhiSuperClusterTrackAtVtx()) >= 0.02) continue; // dPhiIn
-            if (i_electron.sigmaIetaIeta() >= 0.03) continue; // sigmaIEtaIEta
-            if (i_electron.hadronicOverEm() >= 0.10) continue;// H/E
+            if (fabs(i_electron->deltaEtaSuperClusterTrackAtVtx()) >= 0.005) continue; // dEtaIn
+            if (fabs(i_electron->deltaPhiSuperClusterTrackAtVtx()) >= 0.02) continue; // dPhiIn
+            if (i_electron->sigmaIetaIeta() >= 0.03) continue; // sigmaIEtaIEta
+            if (i_electron->hadronicOverEm() >= 0.10) continue;// H/E
             //if (fabs() >= 0.02) continue;// d0 vtx
             //if (fabs() >= 0.1) continue;// dZ vtx
-            if (fabs( 1./i_electron.ecalEnergy() - 1./i_electron.trackMomentumAtVtx().p()) >= 0.05) continue;// 1/E - 1/p
+            if (fabs( 1./i_electron->ecalEnergy() - 1./i_electron->trackMomentumAtVtx().p()) >= 0.05) continue;// 1/E - 1/p
             //if ( >= 0.10) continue; // PF isolation / pT 
             // conversion rejection: vertex fit probability
             //if ( > 0) continue; // Conversion rejection: missing hits
