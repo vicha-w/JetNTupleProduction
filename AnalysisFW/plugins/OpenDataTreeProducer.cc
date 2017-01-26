@@ -620,7 +620,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         // Electron criteria
 
         // Transverse IP of the electron (GSF track)
-        if (fabs(i_electron->gsfTrack()->dxy(i_electron.vertex()->position()) >= 0.04) continue;
+        if (fabs(i_electron->gsfTrack()->dxy(i_electron->vertex()->position()) >= 0.04)) continue;
         // Conversion rejection
         if (!i_electron->passConversionVeto()) continue;
         // MVA
@@ -640,7 +640,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
             if (i_electron->hadronicOverEm() >= 0.12) continue;// H/E
             //if (fabs() >= 0.02) continue;// d0 vtx
             //if (fabs() >= 0.1) continue;// dZ vtx
-            if (fabs( 1./i_electron->ecalEnergy() - 1./i_electron->trackMomentumAtVtx().p()) >= 0.05) continue;// 1/E - 1/p
+            if (fabs( 1./i_electron->ecalEnergy() - i_electron->eSuperClusterOverP()/i_electron->ecalEnergy()) >= 0.05) continue;// 1/E - 1/p
             //if ( >= 0.10) continue; // PF isolation / pT 
             // conversion rejection: vertex fit probability
             //if ( > 0) continue; // Conversion rejection: missing hits
@@ -653,7 +653,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
             if (i_electron->hadronicOverEm() >= 0.10) continue;// H/E
             //if (fabs() >= 0.02) continue;// d0 vtx
             //if (fabs() >= 0.1) continue;// dZ vtx
-            if (fabs( 1./i_electron->ecalEnergy() - 1./i_electron->trackMomentumAtVtx().p()) >= 0.05) continue;// 1/E - 1/p
+            if (fabs( 1./i_electron->ecalEnergy() - i_electron->eSuperClusterOverP()/i_electron->ecalEnergy()) >= 0.05) continue;// 1/E - 1/p
             //if ( >= 0.10) continue; // PF isolation / pT 
             // conversion rejection: vertex fit probability
             //if ( > 0) continue; // Conversion rejection: missing hits
