@@ -629,7 +629,11 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         // Conversion rejection
         if (!i_electron->passConversionVeto()) continue;
         // MVA
-        if (i_electron->electronID("mvaTrigV0") <= 0.5) continue;
+        //if (i_electron->electronID("mvaTrigV0") <= 0.5) continue;
+        // Turned off due to following error:
+        // pat::Electron: the ID mvaTrigV0 can't be found in this pat::Electron.
+        // The available IDs are: 'eidLoose' 'eidRobustHighEnergy' 'eidRobustLoose' 'eidRobustTight' 'eidTight' .
+
         // mHits
         if (i_electron->gsfTrack()->trackerExpectedHitsInner().numberOfHits() > 0) continue;
         // Missing relIso (r=0.3) with Rho corrections
