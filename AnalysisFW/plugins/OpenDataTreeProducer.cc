@@ -533,7 +533,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     met_phi = (*met_handle)[0].phi();
 
     // MET selection cut at et > 40.
-    if (met_et <= 40.) return;
+    //if (met_et <= 40.) return;
 
     // Leptons
     // Muons first
