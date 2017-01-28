@@ -317,6 +317,167 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         ngen = gen_index;
     }
 
+    // Retrieval process are as follows:
+    // Muons first, electrons later, and jets last
+
+    // Leptons
+    // vector holding indices of selected muons and electrons
+
+    // Muons first
+    edm::Handle<std::vector<pat::Muon>> muon_handle;
+    event_obj.getByLabel(mMuonName,muon_handle);
+    std::vector<pat::Muon> muons(muon_handle->begin(), muon_handle->end());
+    int muon_index = 0;
+    for (auto i_muon = muons.begin(); i_muon != muons.end(); i_muon++)
+    {
+        if (!i_muon->isGlobalMuon()) continue;
+        if (!i_muon->isTrackerMuon()) continue;
+        if (!i_muon->muonID("GlobalMuonPromptTight")) continue;
+        if (i_muon->numberOfValidHits() < 10) continue;
+        if (i_muon->vertexNormalizedChi2() >= 10.) continue;
+        if (i_muon->dB() >= 0.02) continue;
+        double RMI = (i_muon->chargedHadronIso() + i_muon->neutralHadronIso() + i_muon->photonIso() ) / (i_muon->p4()).Pt();
+        if (RMI >= 0.20) continue;
+
+        /*
+        // Tight Muon criteria
+        // See https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMuonId#The2011Data
+        // "Baseline muon selections for 2011 data (CMSSW 44X and below)"
+        if (!i_muon->isGlobalMuon()) continue;
+        //if (!i_muon.isPFMuon()) continue; // required in 2012 data
+        if (i_muon->globalTrack()->normalizedChi2() >= 10.) continue;
+        if (i_muon->globalTrack()->hitPattern().numberOfValidMuonHits() <= 0) continue;
+        if (i_muon->numberOfMatchedStations() <= 1) continue;
+        if (i_muon->dB() >= 0.2) continue;
+        //if (fabs(i_muon.muonBestTrack()->dz(i_muon.vertex()->position())) >= 0.2) continue; // required in 2012 data
+        if (i_muon->innerTrack()->hitPattern().numberOfValidPixelHits() <= 0) continue;
+        if (i_muon->innerTrack()->hitPattern().trackerLayersWithMeasurement() <= 5) continue;
+
+        // REMARKS:
+        // Does i_muon.vertex() give out primary vertex?
+        */
+
+        auto muonP4 = i_muon->p4();
+        if (muonP4.Pt() <= 20.) continue;
+        if (fabs(muonP4.Eta()) >= 2.4) continue;
+        muon_pt[muon_index]   = muonP4.Pt();
+        muon_eta[muon_index]  = muonP4.Eta();
+        muon_phi[muon_index]  = muonP4.Phi();
+        muon_E[muon_index]    = muonP4.E();
+
+        muon_charge[muon_index] = i_muon->charge();
+        
+        muon_ID[muon_index] = i_muon->muonID(mMuonID);
+        muon_TIP[muon_index] = i_muon->dB(pat::Muon::BS2D);
+
+        muon_index++;
+    }
+    nmu = muon_index;
+
+    // Electrons later
+    edm::Handle<std::vector<pat::Electron>> electron_handle;
+    event_obj.getByLabel(mElectronName,electron_handle);
+    std::vector<pat::Electron> electrons(electron_handle->begin(), electron_handle->end());
+    int electron_index = 0;
+    for (auto i_electron = electrons.begin(); i_electron != electrons.end(); i_electron++)
+    {
+        //if (i_electron->dB(pat::Electron::BS3D) >=mElectronTIP) continue;
+        //if (i_electron->electronID(mElectronID) < 6) continue;
+        //if (i_electron->gsfTrack()->trackerExpectedHitsInner().numberOfLostHits() >= 2) continue;
+
+        if (fabs(i_electron->gsfTrack()->dxy(vertex_->position()) >= 0.04)) continue;
+        // photon (?) conversion rejection
+        if (!i_electron->passConversionVeto()) continue;
+
+        double REI = (i_electron->chargedHadronIso() + i_electron->neutralHadronIso() + i_electron->photonIso() ) / (i_electron->p4()).Pt();
+        if (REI >= 0.17) continue;
+
+        auto electronP4 = i_electron->p4();
+        if (electronP4.Pt() <= 20.) continue;
+        if (electronP4.Eta() >= 2.5) continue;
+
+        bool deltaRPassed = true;
+        for (auto i_muon = muons.begin(); i_muon != muons.end(); i_muon++)
+        {
+            if (i_muon->numberOfValidHits() <= (unsigned) 10) continue;
+            auto muonP4 = i_muon->p4();
+            double deltaR = reco::deltaR(muonP4.Eta(), muonP4.Phi(), electronP4.Eta(), electronP4.Phi());
+            if (deltaR <= 0.1) deltaRPassed = false;
+        }
+        if (!deltaRPassed) continue;
+
+        // Electron criteria
+
+        // Transverse IP of the electron (GSF track)
+        //if (fabs(i_electron->gsfTrack()->dxy(vertex_->position()) >= 0.04)) continue;
+        // Turned off due to following error:
+        // OpenDataTreeProducer.cc:623:66: error: base operand of '->' has non-pointer type 
+        // 'const Point {aka const ROOT::Math::PositionVector3D<ROOT::Math::Cartesian3D<double>, 
+        // ROOT::Math::DefaultCoordinateSystemTag>}'
+
+        // Conversion rejection
+        //if (!i_electron->passConversionVeto()) continue;
+        // MVA
+        //if (i_electron->electronID("mvaTrigV0") <= 0.5) continue;
+        // Turned off due to following error:
+        // pat::Electron: the ID mvaTrigV0 can't be found in this pat::Electron.
+        // The available IDs are: 'eidLoose' 'eidRobustHighEnergy' 'eidRobustLoose' 'eidRobustTight' 'eidTight' .
+
+        //printf("electrons.electronID(\"mvaTrigV0\" = %f\n", electrons.electronID("mvaTrigV0"));
+
+        // mHits
+        //if (i_electron->gsfTrack()->trackerExpectedHitsInner().numberOfHits() > 0) continue;
+        // Missing relIso (r=0.3) with Rho corrections
+
+        // Simple tight cut
+        /*
+        auto electronP4 = i_electron->p4();
+        if (electronP4.Pt() <= 20.) continue;
+        if (fabs(electronP4.Eta()) <= 1.479)
+        {
+            if (fabs(i_electron->deltaEtaSuperClusterTrackAtVtx()) >= 0.007) continue; // dEtaIn
+            if (fabs(i_electron->deltaPhiSuperClusterTrackAtVtx()) >= 0.15) continue; // dPhiIn
+            if (i_electron->sigmaIetaIeta() >= 0.01) continue; // sigmaIEtaIEta
+            if (i_electron->hadronicOverEm() >= 0.12) continue;// H/E
+            //if (fabs() >= 0.02) continue;// d0 vtx
+            //if (fabs() >= 0.1) continue;// dZ vtx
+            if (fabs( 1./i_electron->ecalEnergy() - i_electron->eSuperClusterOverP()/i_electron->ecalEnergy()) >= 0.05) continue;// 1/E - 1/p
+            //if ( >= 0.10) continue; // PF isolation / pT 
+            // conversion rejection: vertex fit probability
+            //if ( > 0) continue; // Conversion rejection: missing hits
+        }
+        else if (fabs(electronP4.Eta()) < 2.5)
+        {
+            if (fabs(i_electron->deltaEtaSuperClusterTrackAtVtx()) >= 0.009) continue; // dEtaIn
+            if (fabs(i_electron->deltaPhiSuperClusterTrackAtVtx()) >= 0.10) continue; // dPhiIn
+            if (i_electron->sigmaIetaIeta() >= 0.03) continue; // sigmaIEtaIEta
+            if (i_electron->hadronicOverEm() >= 0.10) continue;// H/E
+            //if (fabs() >= 0.02) continue;// d0 vtx
+            //if (fabs() >= 0.1) continue;// dZ vtx
+            if (fabs( 1./i_electron->ecalEnergy() - i_electron->eSuperClusterOverP()/i_electron->ecalEnergy()) >= 0.05) continue;// 1/E - 1/p
+            //if ( >= 0.10) continue; // PF isolation / pT 
+            // conversion rejection: vertex fit probability
+            //if ( > 0) continue; // Conversion rejection: missing hits
+        }
+        else continue;
+        */
+
+        // REMARKS:
+        // What is relIso?
+
+        electron_pt[electron_index]   = electronP4.Pt();
+        electron_eta[electron_index]  = electronP4.Eta();
+        electron_phi[electron_index]  = electronP4.Phi();
+        electron_E[electron_index]    = electronP4.E();
+        
+        electron_charge[electron_index] = i_electron->charge();
+
+        electron_ID[electron_index] = i_electron->electronID(mElectronID);
+        electron_TIP[electron_index] = i_electron->dB(pat::Electron::BS2D);
+        
+        electron_index++;
+    }
+    nele = electron_index;
 
     // PF AK5 Jets
 
@@ -343,6 +504,11 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
             (i_ak5jet->pt()) < mMinPFPtJets) { // jet Pt
             continue;
         }
+
+        if (i_ak5jet->chargedHadronEnergyFraction() < 0) continue;
+        if (i_ak5jet->chargedEmEnergyFraction() > 0.99) continue;
+        if (i_ak5jet->neutralHadronEnergyFraction() >= 0.99) continue;
+        if (i_ak5jet->neutralEmEnergyFraction() >= 0.99) continue;
 
         // Computing beta and beta*
 
@@ -535,156 +701,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     // MET selection cut at et > 40.
     //if (met_et <= 40.) return;
 
-    // Leptons
-    // Muons first
-    edm::Handle<std::vector<pat::Muon>> muon_handle;
-    event_obj.getByLabel(mMuonName,muon_handle);
-    std::vector<pat::Muon> muons(muon_handle->begin(), muon_handle->end());
-    int muon_index = 0;
-    for (auto i_muon = muons.begin(); i_muon != muons.end(); i_muon++)
-    {
-        /*
-        if (!i_muon->isGlobalMuon() || !mGlobalMuon) continue;
-        if (!i_muon->isTrackerMuon() || !mTrackerMuon) continue;
-        //if (!i_muon->muonID(mMuonID)) continue;
-        if (i_muon->numberOfValidHits() < (unsigned) mNumValidHitsMuon) continue;
-        if (i_muon->vertexNormalizedChi2() >= mChi2OverNdof) continue;
-        //if (i_muon->dB(pat::Muon::BS3D) >= mMuonTIP) continue;
-        double RMI = (i_muon->chargedHadronIso() + i_muon->neutralHadronIso() + i_muon->photonIso() ) / (i_muon->p4()).Pt();
-        if (RMI >= mMaxRMI) continue;
-        */
-
-        // Tight Muon criteria
-        // See https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMuonId#The2011Data
-        // "Baseline muon selections for 2011 data (CMSSW 44X and below)"
-        if (!i_muon->isGlobalMuon()) continue;
-        //if (!i_muon.isPFMuon()) continue; // required in 2012 data
-        if (i_muon->globalTrack()->normalizedChi2() >= 10.) continue;
-        if (i_muon->globalTrack()->hitPattern().numberOfValidMuonHits() <= 0) continue;
-        if (i_muon->numberOfMatchedStations() <= 1) continue;
-        if (i_muon->dB() >= 0.2) continue;
-        //if (fabs(i_muon.muonBestTrack()->dz(i_muon.vertex()->position())) >= 0.2) continue; // required in 2012 data
-        if (i_muon->innerTrack()->hitPattern().numberOfValidPixelHits() <= 0) continue;
-        if (i_muon->innerTrack()->hitPattern().trackerLayersWithMeasurement() <= 5) continue;
-
-        // REMARKS:
-        // Does i_muon.vertex() give out primary vertex?
-
-        auto muonP4 = i_muon->p4();
-        if (muonP4.Pt() <= 20.) continue;
-        if (fabs(muonP4.Eta()) >= 2.5) continue;
-        muon_pt[muon_index]   = muonP4.Pt();
-        muon_eta[muon_index]  = muonP4.Eta();
-        muon_phi[muon_index]  = muonP4.Phi();
-        muon_E[muon_index]    = muonP4.E();
-
-        muon_charge[muon_index] = i_muon->charge();
-        
-        muon_ID[muon_index] = i_muon->muonID(mMuonID);
-        muon_TIP[muon_index] = i_muon->dB(pat::Muon::BS2D);
-
-        muon_index++;
-    }
-    nmu = muon_index;
-
-    // Electrons later
-    edm::Handle<std::vector<pat::Electron>> electron_handle;
-    event_obj.getByLabel(mElectronName,electron_handle);
-    std::vector<pat::Electron> electrons(electron_handle->begin(), electron_handle->end());
-    int electron_index = 0;
-    for (auto i_electron = electrons.begin(); i_electron != electrons.end(); i_electron++)
-    {
-        /*
-        //if (i_electron->dB(pat::Electron::BS3D) >=mElectronTIP) continue;
-        //if (i_electron->electronID(mElectronID) < 6) continue;
-        if (i_electron->gsfTrack()->trackerExpectedHitsInner().numberOfLostHits() >= 2) continue;
-        
-        double REI = (i_electron->chargedHadronIso() + i_electron->neutralHadronIso() + i_electron->photonIso() ) / (i_electron->p4()).Pt();
-        if (REI >= mMaxREI) continue;
-
-        auto electronP4 = i_electron->p4();
-        if (electronP4.Pt() <= mMinPtElectrons) continue;
-        if (electronP4.Eta() >= mMaxEtaElectrons) continue;
-
-        bool deltaRPassed = true;
-        for (auto i_muon = muons.begin(); i_muon != muons.end(); i_muon++)
-        {
-            if (i_muon->numberOfValidHits() <= (unsigned) mNumValidHitsMuon) continue;
-            auto muonP4 = i_muon->p4();
-            double deltaR = reco::deltaR(muonP4.Eta(), muonP4.Phi(), electronP4.Eta(), electronP4.Phi());
-            if (deltaR <= mElectronDeltaR) deltaRPassed = false;
-        }
-        if (!deltaRPassed) continue;
-        */
-
-        // Electron criteria
-
-        // Transverse IP of the electron (GSF track)
-        //if (fabs(i_electron->gsfTrack()->dxy(i_electron->vertex()->position()) >= 0.04)) continue;
-        // Turned off due to following error:
-        // OpenDataTreeProducer.cc:623:66: error: base operand of '->' has non-pointer type 
-        // 'const Point {aka const ROOT::Math::PositionVector3D<ROOT::Math::Cartesian3D<double>, 
-        // ROOT::Math::DefaultCoordinateSystemTag>}'
-
-        // Conversion rejection
-        if (!i_electron->passConversionVeto()) continue;
-        // MVA
-        //if (i_electron->electronID("mvaTrigV0") <= 0.5) continue;
-        // Turned off due to following error:
-        // pat::Electron: the ID mvaTrigV0 can't be found in this pat::Electron.
-        // The available IDs are: 'eidLoose' 'eidRobustHighEnergy' 'eidRobustLoose' 'eidRobustTight' 'eidTight' .
-
-        // mHits
-        if (i_electron->gsfTrack()->trackerExpectedHitsInner().numberOfHits() > 0) continue;
-        // Missing relIso (r=0.3) with Rho corrections
-
-        // Simple tight cut
-        auto electronP4 = i_electron->p4();
-        if (electronP4.Pt() <= 20.) continue;
-        if (fabs(electronP4.Eta()) <= 1.479)
-        {
-            if (fabs(i_electron->deltaEtaSuperClusterTrackAtVtx()) >= 0.004) continue; // dEtaIn
-            if (fabs(i_electron->deltaPhiSuperClusterTrackAtVtx()) >= 0.03) continue; // dPhiIn
-            if (i_electron->sigmaIetaIeta() >= 0.01) continue; // sigmaIEtaIEta
-            if (i_electron->hadronicOverEm() >= 0.12) continue;// H/E
-            //if (fabs() >= 0.02) continue;// d0 vtx
-            //if (fabs() >= 0.1) continue;// dZ vtx
-            if (fabs( 1./i_electron->ecalEnergy() - i_electron->eSuperClusterOverP()/i_electron->ecalEnergy()) >= 0.05) continue;// 1/E - 1/p
-            //if ( >= 0.10) continue; // PF isolation / pT 
-            // conversion rejection: vertex fit probability
-            //if ( > 0) continue; // Conversion rejection: missing hits
-        }
-        else if (fabs(electronP4.Eta()) < 2.5)
-        {
-            if (fabs(i_electron->deltaEtaSuperClusterTrackAtVtx()) >= 0.005) continue; // dEtaIn
-            if (fabs(i_electron->deltaPhiSuperClusterTrackAtVtx()) >= 0.02) continue; // dPhiIn
-            if (i_electron->sigmaIetaIeta() >= 0.03) continue; // sigmaIEtaIEta
-            if (i_electron->hadronicOverEm() >= 0.10) continue;// H/E
-            //if (fabs() >= 0.02) continue;// d0 vtx
-            //if (fabs() >= 0.1) continue;// dZ vtx
-            if (fabs( 1./i_electron->ecalEnergy() - i_electron->eSuperClusterOverP()/i_electron->ecalEnergy()) >= 0.05) continue;// 1/E - 1/p
-            //if ( >= 0.10) continue; // PF isolation / pT 
-            // conversion rejection: vertex fit probability
-            //if ( > 0) continue; // Conversion rejection: missing hits
-        }
-        else continue;
-
-        // REMARKS:
-        // What is relIso?
-
-        electron_pt[electron_index]   = electronP4.Pt();
-        electron_eta[electron_index]  = electronP4.Eta();
-        electron_phi[electron_index]  = electronP4.Phi();
-        electron_E[electron_index]    = electronP4.E();
-        
-        electron_charge[electron_index] = i_electron->charge();
-
-        //electron_ID[electron_index] = i_electron->electronID(mElectronID);
-        electron_TIP[electron_index] = i_electron->dB(pat::Electron::BS2D);
-        
-        electron_index++;
-    }
-    nele = electron_index;
+    
 
     // Finally, fill the tree
     if (njet >= (unsigned)mMinNPFJets && 
