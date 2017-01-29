@@ -324,8 +324,8 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     // vector holding indices of selected muons and electrons
     std::list<math::XYZVectorF> vectMuon(kMaxNmu);
     std::list<math::XYZVectorF> vectElec(kMaxNele);
-    i_vectMuon = vectMuon.begin();
-    i_vectElec = vectElec.begin();
+    auto i_vectMuon = vectMuon.begin();
+    auto i_vectElec = vectElec.begin();
 
     // Muons first
     edm::Handle<std::vector<pat::Muon>> muon_handle;
