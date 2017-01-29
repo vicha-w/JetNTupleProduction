@@ -392,7 +392,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         //if (i_electron->electronID(mElectronID) < 6) continue;
         //if (i_electron->gsfTrack()->trackerExpectedHitsInner().numberOfLostHits() >= 2) continue;
 
-        //if (fabs(i_electron->gsfTrack()->dxy(vertex_->position()) >= 0.04)) continue;
+        if (fabs(i_electron->gsfTrack()->dxy(i_electron->vertex()->position()) >= 0.04)) continue;
         // /home/vichayanun/CMSSW_5_3_33/src/JetNTupleProduction/AnalysisFW/plugins/OpenDataTreeProducer.cc:388:46: 
         // error: 'vertex_' was not declared in this scope
         // photon (?) conversion rejection
