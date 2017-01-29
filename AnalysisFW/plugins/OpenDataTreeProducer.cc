@@ -322,6 +322,10 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
 
     // Leptons
     // vector holding indices of selected muons and electrons
+    std::list<math::XYZVectorF> vectMuon(kMaxNmu);
+    std::list<math::XYZVectorF> vectElec(kMaxNele);
+    i_vectMuon = vectMuon.begin();
+    i_vectElec = vectElec.begin();
 
     // Muons first
     edm::Handle<std::vector<pat::Muon>> muon_handle;
@@ -369,6 +373,9 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         
         muon_ID[muon_index] = i_muon->muonID(mMuonID);
         muon_TIP[muon_index] = i_muon->dB(pat::Muon::BS2D);
+
+        *i_vectMuon = i_muon->p4();
+        i_vectMuon++;
 
         muon_index++;
     }
@@ -475,6 +482,9 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         electron_ID[electron_index] = i_electron->electronID(mElectronID);
         electron_TIP[electron_index] = i_electron->dB(pat::Electron::BS2D);
         
+        *i_vectElec = i_electron->p4();
+        i_vectElec++;
+
         electron_index++;
     }
     nele = electron_index;
@@ -509,6 +519,22 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         if (i_ak5jet->chargedEmEnergyFraction() > 0.99) continue;
         if (i_ak5jet->neutralHadronEnergyFraction() >= 0.99) continue;
         if (i_ak5jet->neutralEmEnergyFraction() >= 0.99) continue;
+
+        bool cleanJet = true;
+        auto ak5jetP4 = i_ak5jet->p4();
+        for (i_vectElec = vectElec.begin(); i_vectElec != vectElec.end(); i_vectElec++)
+        {
+            auto electronP4 = *i_vectElec;
+            double deltaR = reco::deltaR(ak5jetP4.Eta(), ak5jetP4.Phi(), electronP4.Eta(), electronP4.Phi());
+            if (deltaR < 0.4) cleanJet = false;
+        }
+        for (i_vectMuon = vectMuon.begin(); i_vectMuon != vectMuon.end(); i_vectMuon++)
+        {
+            auto muonP4 = *i_vectMuon;
+            double deltaR = reco::deltaR(ak5jetP4.Eta(), ak5jetP4.Phi(), muonP4.Eta(), muonP4.Phi());
+            if (deltaR < 0.4) cleanJet = false;
+        }
+        if (!cleanJet) continue;
 
         // Computing beta and beta*
 
