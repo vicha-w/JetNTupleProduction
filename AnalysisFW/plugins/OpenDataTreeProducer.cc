@@ -512,11 +512,12 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
 
         // Skip the current iteration if jet is not selected
         if (!i_ak5jet->isPFJet() || // Is this jet a PF jet?
-            fabs(i_ak5jet->y()) > mMaxY || // jet rapidity
-            (i_ak5jet->pt()) < mMinPFPtJets) { // jet Pt
+            fabs(i_ak5jet->eta()) >= 2.5 || // jet rapidity
+            (i_ak5jet->pt()) < 30.) { // jet Pt
             continue;
         }
 
+	// Loose jet identification
         if (i_ak5jet->chargedHadronEnergyFraction() < 0) continue;
         if (i_ak5jet->chargedEmEnergyFraction() > 0.99) continue;
         if (i_ak5jet->neutralHadronEnergyFraction() >= 0.99) continue;
