@@ -379,6 +379,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         
         b_muon_index++;
 
+        /*
         if (!i_muon->isGlobalMuon()) continue;
         if (!i_muon->isTrackerMuon()) continue;
         if (!i_muon->muonID("GlobalMuonPromptTight")) continue;
@@ -387,6 +388,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         if (i_muon->dB() >= 0.02) continue;
         double RMI = (i_muon->chargedHadronIso() + i_muon->neutralHadronIso() + i_muon->photonIso() ) / (i_muon->p4()).Pt();
         if (RMI >= 0.20) continue;
+        */
 
         /*
         // Tight Muon criteria
@@ -405,6 +407,16 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         // REMARKS:
         // Does i_muon.vertex() give out primary vertex? YESSSSS
         */
+
+        // Soft Muon criteria
+        // See https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMuonId#The2011Data
+        // "Baseline muon selections for 2011 data (CMSSW 44X and below) - Soft Muon selection (NEW)"
+        if (!i_muon->muonID("TMOneStationTight")) continue; // equivalent to muon::isGoodMuon(recoMu, TMOneStationTight)
+        if (i_muon->innerTrack()->hitPattern().numberOfValidTrackerHits() <= 10) continue;
+        if (i_muon->innerTrack()->hitPattern().pixelLayersWithMeasurement() <= 1) continue;
+        if (i_muon->innerTrack()->normalizedChi2() >= 1.8) continue;
+        if (fabs(i_muon->innerTrack()->dxy(i_muon->vertex())) >= 3) continue;
+        if (fabs(i_muon->innerTrack()->dz(i_muon->vertex())) >= 30.) continue;
 
         if (muonP4.Pt() <= 20.) continue;
         if (fabs(muonP4.Eta()) >= 2.4) continue;
@@ -434,11 +446,11 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     int b_electron_index = 0;
     for (auto i_electron = electrons.begin(); i_electron != electrons.end(); i_electron++)
     {
-	// Try 
-	// electrons.pt()
-	// relIso = Relative Electron Isolation
-	// USE LOOSE ELECTRON CRITERIA
-	// See TOP-11-005-paper-v23 Ref 1 - 5
+	    // Try 
+	    // electrons.pt() 
+	    // relIso = Relative Electron Isolation (DONE)
+	    // USE LOOSE ELECTRON CRITERIA (DONE)
+	    // See TOP-11-005-paper-v23 Ref 1 - 5 (DONE)
 
         auto electronP4 = i_electron->p4();
         // Log electron properties before cut
@@ -451,11 +463,14 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         b_electron_TIP[b_electron_index] = i_electron->dB(pat::Electron::BS2D);
 
         b_electron_index++;
+
+        auto electronDummy = electrons.pt();
 	
         //if (i_electron->dB(pat::Electron::BS3D) >=mElectronTIP) continue;
         //if (i_electron->electronID(mElectronID) < 6) continue;
         //if (i_electron->gsfTrack()->trackerExpectedHitsInner().numberOfLostHits() >= 2) continue;
 
+        /*
         if (fabs(i_electron->gsfTrack()->dxy(i_electron->vertex()) >= 0.04)) continue;
         // /home/vichayanun/CMSSW_5_3_33/src/JetNTupleProduction/AnalysisFW/plugins/OpenDataTreeProducer.cc:388:46: 
         // error: 'vertex_' was not declared in this scope
@@ -477,44 +492,37 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
             if (deltaR <= 0.1) deltaRPassed = false;
         }
         if (!deltaRPassed) continue;
+        */
 
         // Electron criteria
 
         // Transverse IP of the electron (GSF track)
-        //if (fabs(i_electron->gsfTrack()->dxy(vertex_->position()) >= 0.04)) continue;
-        // Turned off due to following error:
-        // OpenDataTreeProducer.cc:623:66: error: base operand of '->' has non-pointer type 
-        // 'const Point {aka const ROOT::Math::PositionVector3D<ROOT::Math::Cartesian3D<double>, 
-        // ROOT::Math::DefaultCoordinateSystemTag>}'
+        if (fabs(i_electron->gsfTrack()->dxy(i_electron->vertex()) >= 0.04)) continue;
 
         // Conversion rejection
-        //if (!i_electron->passConversionVeto()) continue;
+        if (!i_electron->passConversionVeto()) continue;
         // MVA
         //if (i_electron->electronID("mvaTrigV0") <= 0.5) continue;
         // Turned off due to following error:
         // pat::Electron: the ID mvaTrigV0 can't be found in this pat::Electron.
         // The available IDs are: 'eidLoose' 'eidRobustHighEnergy' 'eidRobustLoose' 'eidRobustTight' 'eidTight' .
 
-        //printf("electrons.electronID(\"mvaTrigV0\" = %f\n", electrons.electronID("mvaTrigV0"));
-
         // mHits
-        //if (i_electron->gsfTrack()->trackerExpectedHitsInner().numberOfHits() > 0) continue;
-        // Missing relIso (r=0.3) with Rho corrections
+        if (i_electron->gsfTrack()->trackerExpectedHitsInner().numberOfHits() > 0) continue;
 
-        // Simple tight cut
-        /*
-        auto electronP4 = i_electron->p4();
+        // Simple loose cut
         if (electronP4.Pt() <= 20.) continue;
+        double REI = (i_electron->chargedHadronIso() + i_electron->neutralHadronIso() + i_electron->photonIso() ) / (i_electron->p4()).Pt();
         if (fabs(electronP4.Eta()) <= 1.479)
         {
             if (fabs(i_electron->deltaEtaSuperClusterTrackAtVtx()) >= 0.007) continue; // dEtaIn
             if (fabs(i_electron->deltaPhiSuperClusterTrackAtVtx()) >= 0.15) continue; // dPhiIn
             if (i_electron->sigmaIetaIeta() >= 0.01) continue; // sigmaIEtaIEta
             if (i_electron->hadronicOverEm() >= 0.12) continue;// H/E
-            //if (fabs() >= 0.02) continue;// d0 vtx reco::GsfElectron::gsfTrack()->d0(const Point &vertex) (?)
-            //if (fabs() >= 0.1) continue;// dZ vtx  reco::GsfElectron::gsfTrack()->dz (const Point &vertex)
+            if (fabs(i_electron->gsfTrack()->d0()) >= 0.02) continue;// d0 vtx 
+            if (fabs(i_electron->gsfTrack()->dz(i_electron->vertex())) >= 0.2) continue;// dZ vtx
             if (fabs( 1./i_electron->ecalEnergy() - i_electron->eSuperClusterOverP()/i_electron->ecalEnergy()) >= 0.05) continue;// 1/E - 1/p
-            //if ( >= 0.10) continue; // PF isolation / pT (SAME AS relIso < 0.3)
+            if (REI >= 0.15) continue; // PF isolation / pT (SAME AS RELATIVE ELECTRON ISOLATION)
             // conversion rejection: vertex fit probability (NO NEED)
             //if ( > 0) continue; // Conversion rejection: missing hits (NO NEED)
         }
@@ -524,18 +532,14 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
             if (fabs(i_electron->deltaPhiSuperClusterTrackAtVtx()) >= 0.10) continue; // dPhiIn
             if (i_electron->sigmaIetaIeta() >= 0.03) continue; // sigmaIEtaIEta
             if (i_electron->hadronicOverEm() >= 0.10) continue;// H/E
-            //if (fabs() >= 0.02) continue;// d0 vtx
-            //if (fabs() >= 0.1) continue;// dZ vtx
+            if (fabs(i_electron->gsfTrack()->d0()) >= 0.02) continue;// d0 vtx 
+            if (fabs(i_electron->gsfTrack()->dz(i_electron->vertex())) >= 0.2) continue;// dZ vtx
             if (fabs( 1./i_electron->ecalEnergy() - i_electron->eSuperClusterOverP()/i_electron->ecalEnergy()) >= 0.05) continue;// 1/E - 1/p
-            //if ( >= 0.10) continue; // PF isolation / pT 
-            // conversion rejection: vertex fit probability
-            //if ( > 0) continue; // Conversion rejection: missing hits
+            if (REI >= 0.15) continue; // PF isolation / pT (SAME AS RELATIVE ELECTRON ISOLATION)
+            // conversion rejection: vertex fit probability (NO NEED)
+            //if ( > 0) continue; // Conversion rejection: missing hits (NO NEED)
         }
         else continue;
-        */
-
-        // REMARKS:
-        // What is relIso?
 
         electron_pt[electron_index]   = electronP4.Pt();
         electron_eta[electron_index]  = electronP4.Eta();
@@ -597,6 +601,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         if (i_ak5jet->neutralHadronEnergyFraction() >= 0.99) continue;
         if (i_ak5jet->neutralEmEnergyFraction() >= 0.99) continue;
 
+        // Jet lepton cleaning
         bool cleanJet = true;
         for (i_vectElec = vectElec.begin(); i_vectElec != vectElec.end(); i_vectElec++)
         {
