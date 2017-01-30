@@ -334,6 +334,8 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     int muon_index = 0;
     for (auto i_muon = muons.begin(); i_muon != muons.end(); i_muon++)
     {
+	// USE LOOSE MUON CRITERIA
+
         if (!i_muon->isGlobalMuon()) continue;
         if (!i_muon->isTrackerMuon()) continue;
         if (!i_muon->muonID("GlobalMuonPromptTight")) continue;
@@ -358,7 +360,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         if (i_muon->innerTrack()->hitPattern().trackerLayersWithMeasurement() <= 5) continue;
 
         // REMARKS:
-        // Does i_muon.vertex() give out primary vertex?
+        // Does i_muon.vertex() give out primary vertex? YESSSSS
         */
 
         auto muonP4 = i_muon->p4();
@@ -388,6 +390,12 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     int electron_index = 0;
     for (auto i_electron = electrons.begin(); i_electron != electrons.end(); i_electron++)
     {
+	// Try 
+	// electrons.pt()
+	// relIso = Relative Electron Isolation
+	// USE LOOSE ELECTRON CRITERIA
+	// See TOP-11-005-paper-v23 Ref 1 - 5
+	
         //if (i_electron->dB(pat::Electron::BS3D) >=mElectronTIP) continue;
         //if (i_electron->electronID(mElectronID) < 6) continue;
         //if (i_electron->gsfTrack()->trackerExpectedHitsInner().numberOfLostHits() >= 2) continue;
@@ -403,7 +411,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
 
         auto electronP4 = i_electron->p4();
         if (electronP4.Pt() <= 20.) continue;
-        if (electronP4.Eta() >= 2.5) continue;
+        if (fabs(electronP4.Eta()) >= 2.5) continue;
 
         bool deltaRPassed = true;
         for (auto i_muon = muons.begin(); i_muon != muons.end(); i_muon++)
@@ -448,12 +456,12 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
             if (fabs(i_electron->deltaPhiSuperClusterTrackAtVtx()) >= 0.15) continue; // dPhiIn
             if (i_electron->sigmaIetaIeta() >= 0.01) continue; // sigmaIEtaIEta
             if (i_electron->hadronicOverEm() >= 0.12) continue;// H/E
-            //if (fabs() >= 0.02) continue;// d0 vtx
-            //if (fabs() >= 0.1) continue;// dZ vtx
+            //if (fabs() >= 0.02) continue;// d0 vtx reco::GsfElectron::gsfTrack()->d0(const Point &vertex) (?)
+            //if (fabs() >= 0.1) continue;// dZ vtx  reco::GsfElectron::gsfTrack()->dz (const Point &vertex)
             if (fabs( 1./i_electron->ecalEnergy() - i_electron->eSuperClusterOverP()/i_electron->ecalEnergy()) >= 0.05) continue;// 1/E - 1/p
-            //if ( >= 0.10) continue; // PF isolation / pT 
-            // conversion rejection: vertex fit probability
-            //if ( > 0) continue; // Conversion rejection: missing hits
+            //if ( >= 0.10) continue; // PF isolation / pT (SAME AS relIso < 0.3)
+            // conversion rejection: vertex fit probability (NO NEED)
+            //if ( > 0) continue; // Conversion rejection: missing hits (NO NEED)
         }
         else if (fabs(electronP4.Eta()) < 2.5)
         {
@@ -512,7 +520,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
 
         // Skip the current iteration if jet is not selected
         if (!i_ak5jet->isPFJet() || // Is this jet a PF jet?
-            fabs(i_ak5jet->eta()) >= 2.5 || // jet rapidity
+            fabs(i_ak5jet->eta()) >= 2.5 || // jet pseudorapidity
             (i_ak5jet->pt()) < 30.) { // jet Pt
             continue;
         }
