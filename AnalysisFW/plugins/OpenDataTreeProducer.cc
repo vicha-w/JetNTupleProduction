@@ -107,9 +107,9 @@ void OpenDataTreeProducer::beginJob() {
     mTree->Branch("jet_btag", jet_btag, "jet_btag[njet]/F");
     mTree->Branch("jet_E", jet_E, "jet_E[njet]/F");   
     mTree->Branch("jet_tightID", jet_tightID, "jet_tightID[njet]/O");
-    mTree->Branch("jet_area", jet_area, "jet_area[njet]/F");
-    mTree->Branch("jet_jes", jet_jes, "jet_jes[njet]/F");
-    mTree->Branch("jet_igen", jet_igen, "jet_igen[njet]/I");
+    //mTree->Branch("jet_area", jet_area, "jet_area[njet]/F");
+    //mTree->Branch("jet_jes", jet_jes, "jet_jes[njet]/F");
+    //mTree->Branch("jet_igen", jet_igen, "jet_igen[njet]/I");
 
 /*
     // AK7 variables
@@ -182,6 +182,36 @@ void OpenDataTreeProducer::beginJob() {
     mTree->Branch("electron_charge", electron_charge, "electron_charge[nele]/I");
     mTree->Branch("electron_ID", electron_ID, "electron_ID[nele]/F");
     mTree->Branch("electron_TIP", electron_TIP, "electron_TIP[nele]/F");
+
+    // Variables before cut
+    mTree->Branch("b_njet", &b_njet, "b_njet/i");
+    mTree->Branch("b_jet_pt", b_jet_pt, "b_jet_pt[njet]/F");
+    mTree->Branch("b_jet_eta", b_jet_eta, "b_jet_eta[njet]/F");
+    mTree->Branch("b_jet_phi", b_jet_phi, "b_jet_phi[njet]/F");
+    mTree->Branch("b_jet_btag", b_jet_btag, "b_jet_btag[njet]/F");
+    mTree->Branch("b_jet_E", b_jet_E, "b_jet_E[njet]/F");   
+    //mTree->Branch("b_jet_tightID", b_jet_tightID, "b_jet_tightID[njet]/O");
+
+    //mTree->Branch("b_met_et",&b_met_et,"b_met_et/F");
+    //mTree->Branch("b_met_phi",&b_met_phi,"b_met_phi/F");
+
+    mTree->Branch("b_nmu", &b_nmu, "b_nmu/i");
+    mTree->Branch("b_muon_pt", b_muon_pt, "b_muon_pt[nmu]/F");
+    mTree->Branch("b_muon_eta", b_muon_eta, "b_muon_eta[nmu]/F");
+    mTree->Branch("b_muon_phi", b_muon_phi, "b_muon_phi[nmu]/F");
+    mTree->Branch("b_muon_E", b_muon_E, "b_muon_E[nmu]/F");
+    mTree->Branch("b_muon_charge", b_muon_charge, "b_muon_charge[nmu]/I");
+    mTree->Branch("b_muon_ID", b_muon_ID, "b_muon_ID[nmu]/O");
+    mTree->Branch("b_muon_TIP", b_muon_TIP, "b_muon_TIP[nmu]/F");
+
+    mTree->Branch("b_nele", &b_nele, "b_nele/i");
+    mTree->Branch("b_electron_pt", b_electron_pt, "b_electron_pt[nele]/F");
+    mTree->Branch("b_electron_eta", b_electron_eta, "b_electron_eta[nele]/F");
+    mTree->Branch("b_electron_phi", b_electron_phi, "b_electron_phi[nele]/F");
+    mTree->Branch("b_electron_E", b_electron_E, "b_electron_E[nele]/F");
+    mTree->Branch("b_electron_charge", b_electron_charge, "b_electron_charge[nele]/I");
+    mTree->Branch("b_electron_ID", b_electron_ID, "b_electron_ID[nele]/F");
+    mTree->Branch("b_electron_TIP", b_electron_TIP, "b_electron_TIP[nele]/F");
 }
 
 void OpenDataTreeProducer::endJob() {
@@ -332,9 +362,22 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     event_obj.getByLabel(mMuonName,muon_handle);
     std::vector<pat::Muon> muons(muon_handle->begin(), muon_handle->end());
     int muon_index = 0;
+    int b_muon_index = 0;
     for (auto i_muon = muons.begin(); i_muon != muons.end(); i_muon++)
     {
 	// USE LOOSE MUON CRITERIA
+
+        // Log muon properties before cut
+        auto muonP4 = i_muon->p4();
+        b_muon_pt[b_muon_index]   = muonP4.Pt();
+        b_muon_eta[b_muon_index]  = muonP4.Eta();
+        b_muon_phi[b_muon_index]  = muonP4.Phi();
+        b_muon_E[b_muon_index]    = muonP4.E();
+        b_muon_charge[b_muon_index] = i_muon->charge();
+        b_muon_ID[b_muon_index] = i_muon->muonID(mMuonID);
+        b_muon_TIP[b_muon_index] = i_muon->dB(pat::Muon::BS2D);
+        
+        b_muon_index++;
 
         if (!i_muon->isGlobalMuon()) continue;
         if (!i_muon->isTrackerMuon()) continue;
@@ -363,7 +406,6 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         // Does i_muon.vertex() give out primary vertex? YESSSSS
         */
 
-        auto muonP4 = i_muon->p4();
         if (muonP4.Pt() <= 20.) continue;
         if (fabs(muonP4.Eta()) >= 2.4) continue;
         muon_pt[muon_index]   = muonP4.Pt();
@@ -382,12 +424,14 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         muon_index++;
     }
     nmu = muon_index;
+    b_nmu = b_muon_index;
 
     // Electrons later
     edm::Handle<std::vector<pat::Electron>> electron_handle;
     event_obj.getByLabel(mElectronName,electron_handle);
     std::vector<pat::Electron> electrons(electron_handle->begin(), electron_handle->end());
     int electron_index = 0;
+    int b_electron_index = 0;
     for (auto i_electron = electrons.begin(); i_electron != electrons.end(); i_electron++)
     {
 	// Try 
@@ -395,6 +439,18 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
 	// relIso = Relative Electron Isolation
 	// USE LOOSE ELECTRON CRITERIA
 	// See TOP-11-005-paper-v23 Ref 1 - 5
+
+        auto electronP4 = i_electron->p4();
+        // Log electron properties before cut
+        b_electron_pt[b_electron_index]   = electronP4.Pt();
+        b_electron_eta[b_electron_index]  = electronP4.Eta();
+        b_electron_phi[b_electron_index]  = electronP4.Phi();
+        b_electron_E[b_electron_index]    = electronP4.E();
+        b_electron_charge[b_electron_index] = i_electron->charge();
+        b_electron_ID[b_electron_index] = i_electron->electronID(mElectronID);
+        b_electron_TIP[b_electron_index] = i_electron->dB(pat::Electron::BS2D);
+
+        b_electron_index++;
 	
         //if (i_electron->dB(pat::Electron::BS3D) >=mElectronTIP) continue;
         //if (i_electron->electronID(mElectronID) < 6) continue;
@@ -409,7 +465,6 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         double REI = (i_electron->chargedHadronIso() + i_electron->neutralHadronIso() + i_electron->photonIso() ) / (i_electron->p4()).Pt();
         if (REI >= 0.17) continue;
 
-        auto electronP4 = i_electron->p4();
         if (electronP4.Pt() <= 20.) continue;
         if (fabs(electronP4.Eta()) >= 2.5) continue;
 
@@ -498,6 +553,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         electron_index++;
     }
     nele = electron_index;
+    b_nele = b_electron_index;
 
     // PF AK5 Jets
 
@@ -509,6 +565,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
 
     // Index of the selected jet 
     int ak5_index = 0;
+    int b_ak5_index = 0;
 
     // Vertex Info
     Handle<reco::VertexCollection> recVtxs;
@@ -517,6 +574,15 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     // Iterate over the jets of the event
     for (auto i_ak5jet = patjets.begin(); i_ak5jet != patjets.end(); ++i_ak5jet) 
     {
+        auto ak5jetP4 = i_ak5jet->p4();
+        // Log jet properties before cut
+        b_jet_pt[b_ak5_index]   = ak5jetP4.Pt();
+        b_jet_eta[b_ak5_index]  = ak5jetP4.Eta();
+        b_jet_phi[b_ak5_index]  = ak5jetP4.Phi();
+        b_jet_btag[b_ak5_index] = i_ak5jet->bDiscriminator(mBTagDiscriminator);
+        b_jet_E[b_ak5_index]    = ak5jetP4.E();
+
+        b_ak5_index++;
 
         // Skip the current iteration if jet is not selected
         if (!i_ak5jet->isPFJet() || // Is this jet a PF jet?
@@ -525,14 +591,13 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
             continue;
         }
 
-	// Loose jet identification
+	    // Loose jet identification
         if (i_ak5jet->chargedHadronEnergyFraction() < 0) continue;
         if (i_ak5jet->chargedEmEnergyFraction() > 0.99) continue;
         if (i_ak5jet->neutralHadronEnergyFraction() >= 0.99) continue;
         if (i_ak5jet->neutralEmEnergyFraction() >= 0.99) continue;
 
         bool cleanJet = true;
-        auto ak5jetP4 = i_ak5jet->p4();
         for (i_vectElec = vectElec.begin(); i_vectElec != vectElec.end(); i_vectElec++)
         {
             auto electronP4 = *i_vectElec;
@@ -633,11 +698,10 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         jet_jes[ak5_index] = 1/i_ak5jet->jecFactor(0); // JEC factor (pfjet is already corrected !!)
 
         // p4 is already corrected!
-        auto p4 = i_ak5jet->p4();
-        jet_pt[ak5_index]   = p4.Pt();
-        jet_eta[ak5_index]  = p4.Eta();
-        jet_phi[ak5_index]  = p4.Phi();
-        jet_E[ak5_index]    = p4.E();
+        jet_pt[ak5_index]   = ak5jetP4.Pt();
+        jet_eta[ak5_index]  = ak5jetP4.Eta();
+        jet_phi[ak5_index]  = ak5jetP4.Phi();
+        jet_E[ak5_index]    = ak5jetP4.E();
 
         jet_btag[ak5_index] = i_ak5jet->bDiscriminator(mBTagDiscriminator);
         

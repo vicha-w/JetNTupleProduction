@@ -192,6 +192,37 @@ class OpenDataTreeProducer : public edm::EDAnalyzer
     Int_t electron_charge[kMaxNele];
     Float_t electron_ID[kMaxNele];
     Float_t electron_TIP[kMaxNmu];
+
+    // Variables before cut
+    UInt_t b_njet;
+    Float_t b_jet_pt[kMaxNjet];
+    Float_t b_jet_eta[kMaxNjet];
+    Float_t b_jet_phi[kMaxNjet];
+    Float_t b_jet_E[kMaxNjet];
+    Bool_t b_jet_tightID[kMaxNjet];
+    Float_t b_jet_area[kMaxNjet];
+    Float_t b_jet_jes[kMaxNjet];
+    Int_t b_jet_igen[kMaxNjet];
+    Float_t b_jet_btag[kMaxNjet];
+
+    UInt_t b_nmu;
+    Float_t b_muon_pt[kMaxNmu];
+    Float_t b_muon_eta[kMaxNmu];
+    Float_t b_muon_phi[kMaxNmu];
+    Float_t b_muon_E[kMaxNmu];
+    Int_t b_muon_charge[kMaxNmu];
+    Bool_t b_muon_ID[kMaxNmu];
+    Float_t b_muon_TIP[kMaxNmu];
+
+    UInt_t b_nele;
+    Float_t b_electron_pt[kMaxNele];
+    Float_t b_electron_eta[kMaxNele];
+    Float_t b_electron_phi[kMaxNele];
+    Float_t b_electron_E[kMaxNele];
+    Int_t b_electron_charge[kMaxNele];
+    Float_t b_electron_ID[kMaxNele];
+    Float_t b_electron_TIP[kMaxNmu];
+
 };
 
 #endif
