@@ -464,7 +464,13 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
 
         b_electron_index++;
 
-        auto electronDummy = electrons.pt();
+        //auto electronDummy = electrons.pt();
+        // /home/vichayanun/CMSSW_5_3_33/src/JetNTupleProduction/AnalysisFW/plugins/OpenDataTreeProducer.cc:467:40: 
+        // error: 'class std::vector<pat::Electron>' has no member named 'pt'
+        // /home/vichayanun/CMSSW_5_3_33/src/JetNTupleProduction/AnalysisFW/plugins/OpenDataTreeProducer.cc:467:43: 
+        // error: unable to deduce 'auto' from '<expression error>'
+        // /home/vichayanun/CMSSW_5_3_33/src/JetNTupleProduction/AnalysisFW/plugins/OpenDataTreeProducer.cc:467:14: 
+        // error: unused variable 'electronDummy' [-Werror=unused-variable]
 	
         //if (i_electron->dB(pat::Electron::BS3D) >=mElectronTIP) continue;
         //if (i_electron->electronID(mElectronID) < 6) continue;
