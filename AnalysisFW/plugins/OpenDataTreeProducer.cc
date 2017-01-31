@@ -379,8 +379,8 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
             b_muon_charge[b_muon_index] = i_muon->charge();
             b_muon_ID[b_muon_index] = i_muon->muonID(mMuonID);
             b_muon_TIP[b_muon_index] = i_muon->dB(pat::Muon::BS2D);
+            b_muon_index++;
         }
-        b_muon_index++;
 
         /*
         if (!i_muon->isGlobalMuon()) continue;
@@ -467,9 +467,8 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
             b_electron_charge[b_electron_index] = i_electron->charge();
             b_electron_ID[b_electron_index] = i_electron->electronID(mElectronID);
             b_electron_TIP[b_electron_index] = i_electron->dB(pat::Electron::BS2D);
+            b_electron_index++;
         }
-
-        b_electron_index++;
 
         //auto electronDummy = electrons.pt();
         // /home/vichayanun/CMSSW_5_3_33/src/JetNTupleProduction/AnalysisFW/plugins/OpenDataTreeProducer.cc:467:40: 
@@ -596,9 +595,8 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
             b_jet_phi[b_ak5_index]  = ak5jetP4.Phi();
             b_jet_btag[b_ak5_index] = i_ak5jet->bDiscriminator(mBTagDiscriminator);
             b_jet_E[b_ak5_index]    = ak5jetP4.E();
+            b_ak5_index++;
         }
-
-        b_ak5_index++;
 
         // Skip the current iteration if jet is not selected
         if (!i_ak5jet->isPFJet() || // Is this jet a PF jet?
