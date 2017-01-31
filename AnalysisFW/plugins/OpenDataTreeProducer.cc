@@ -185,33 +185,33 @@ void OpenDataTreeProducer::beginJob() {
 
     // Variables before cut
     mTree->Branch("b_njet", &b_njet, "b_njet/i");
-    mTree->Branch("b_jet_pt", b_jet_pt, "b_jet_pt[njet]/F");
-    mTree->Branch("b_jet_eta", b_jet_eta, "b_jet_eta[njet]/F");
-    mTree->Branch("b_jet_phi", b_jet_phi, "b_jet_phi[njet]/F");
-    mTree->Branch("b_jet_btag", b_jet_btag, "b_jet_btag[njet]/F");
-    mTree->Branch("b_jet_E", b_jet_E, "b_jet_E[njet]/F");   
+    mTree->Branch("b_jet_pt", b_jet_pt, "b_jet_pt[b_njet]/F");
+    mTree->Branch("b_jet_eta", b_jet_eta, "b_jet_eta[b_njet]/F");
+    mTree->Branch("b_jet_phi", b_jet_phi, "b_jet_phi[b_njet]/F");
+    mTree->Branch("b_jet_btag", b_jet_btag, "b_jet_btag[b_njet]/F");
+    mTree->Branch("b_jet_E", b_jet_E, "b_jet_E[b_njet]/F");   
     //mTree->Branch("b_jet_tightID", b_jet_tightID, "b_jet_tightID[njet]/O");
 
     //mTree->Branch("b_met_et",&b_met_et,"b_met_et/F");
     //mTree->Branch("b_met_phi",&b_met_phi,"b_met_phi/F");
 
     mTree->Branch("b_nmu", &b_nmu, "b_nmu/i");
-    mTree->Branch("b_muon_pt", b_muon_pt, "b_muon_pt[nmu]/F");
-    mTree->Branch("b_muon_eta", b_muon_eta, "b_muon_eta[nmu]/F");
-    mTree->Branch("b_muon_phi", b_muon_phi, "b_muon_phi[nmu]/F");
-    mTree->Branch("b_muon_E", b_muon_E, "b_muon_E[nmu]/F");
-    mTree->Branch("b_muon_charge", b_muon_charge, "b_muon_charge[nmu]/I");
-    mTree->Branch("b_muon_ID", b_muon_ID, "b_muon_ID[nmu]/O");
-    mTree->Branch("b_muon_TIP", b_muon_TIP, "b_muon_TIP[nmu]/F");
+    mTree->Branch("b_muon_pt", b_muon_pt, "b_muon_pt[b_nmu]/F");
+    mTree->Branch("b_muon_eta", b_muon_eta, "b_muon_eta[b_nmu]/F");
+    mTree->Branch("b_muon_phi", b_muon_phi, "b_muon_phi[b_nmu]/F");
+    mTree->Branch("b_muon_E", b_muon_E, "b_muon_E[b_nmu]/F");
+    mTree->Branch("b_muon_charge", b_muon_charge, "b_muon_charge[b_nmu]/I");
+    mTree->Branch("b_muon_ID", b_muon_ID, "b_muon_ID[b_nmu]/O");
+    mTree->Branch("b_muon_TIP", b_muon_TIP, "b_muon_TIP[b_nmu]/F");
 
     mTree->Branch("b_nele", &b_nele, "b_nele/i");
-    mTree->Branch("b_electron_pt", b_electron_pt, "b_electron_pt[nele]/F");
-    mTree->Branch("b_electron_eta", b_electron_eta, "b_electron_eta[nele]/F");
-    mTree->Branch("b_electron_phi", b_electron_phi, "b_electron_phi[nele]/F");
-    mTree->Branch("b_electron_E", b_electron_E, "b_electron_E[nele]/F");
-    mTree->Branch("b_electron_charge", b_electron_charge, "b_electron_charge[nele]/I");
-    mTree->Branch("b_electron_ID", b_electron_ID, "b_electron_ID[nele]/F");
-    mTree->Branch("b_electron_TIP", b_electron_TIP, "b_electron_TIP[nele]/F");
+    mTree->Branch("b_electron_pt", b_electron_pt, "b_electron_pt[b_nele]/F");
+    mTree->Branch("b_electron_eta", b_electron_eta, "b_electron_eta[b_nele]/F");
+    mTree->Branch("b_electron_phi", b_electron_phi, "b_electron_phi[b_nele]/F");
+    mTree->Branch("b_electron_E", b_electron_E, "b_electron_E[b_nele]/F");
+    mTree->Branch("b_electron_charge", b_electron_charge, "b_electron_charge[b_nele]/I");
+    mTree->Branch("b_electron_ID", b_electron_ID, "b_electron_ID[b_nele]/F");
+    mTree->Branch("b_electron_TIP", b_electron_TIP, "b_electron_TIP[b_nele]/F");
 }
 
 void OpenDataTreeProducer::endJob() {
@@ -739,7 +739,8 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         ak5_index++;
     }
     // Number of selected jets in the event
-    njet = ak5_index;    
+    njet = ak5_index;
+    b_njet = b_ak5_index;
 
     //! Here we are interested in ak5 jets only.
     //! Subject to cleanup.
