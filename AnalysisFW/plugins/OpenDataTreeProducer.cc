@@ -370,7 +370,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         // Log muon properties before cut
         auto muonP4 = i_muon->p4();
 
-        if (b_muon_index < kMaxNmu)
+        if (b_muon_index < (int) kMaxNmu)
         {
             b_muon_pt[b_muon_index]   = muonP4.Pt();
             b_muon_eta[b_muon_index]  = muonP4.Eta();
@@ -458,7 +458,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
 
         auto electronP4 = i_electron->p4();
         // Log electron properties before cut
-        if (b_electron_index < kMaxNele)
+        if (b_electron_index < (int) kMaxNele)
         {
             b_electron_pt[b_electron_index]   = electronP4.Pt();
             b_electron_eta[b_electron_index]  = electronP4.Eta();
@@ -522,7 +522,6 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
 
         // Simple loose cut
         if (electronP4.Pt() <= 20.) continue;
-        double REI = (i_electron->chargedHadronIso() + i_electron->neutralHadronIso() + i_electron->photonIso() ) / (i_electron->p4()).Pt();
         if (fabs(electronP4.Eta()) <= 1.479)
         {
             if (fabs(i_electron->deltaEtaSuperClusterTrackAtVtx()) >= 0.007) continue; // dEtaIn
@@ -590,7 +589,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     {
         auto ak5jetP4 = i_ak5jet->p4();
         // Log jet properties before cut
-        if (b_ak5_index < kMaxNjet)
+        if (b_ak5_index < (int) kMaxNjet)
         {
             b_jet_pt[b_ak5_index]   = ak5jetP4.Pt();
             b_jet_eta[b_ak5_index]  = ak5jetP4.Eta();
