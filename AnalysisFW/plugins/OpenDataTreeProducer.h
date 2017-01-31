@@ -96,10 +96,10 @@ class OpenDataTreeProducer : public edm::EDAnalyzer
     
     //---- TTree variables --------
     
-    static const UInt_t kMaxNjet = 64;
+    static const UInt_t kMaxNjet = 128;
     static const UInt_t kMaxNtrg = 32;
-    static const UInt_t kMaxNmu = 64;
-    static const UInt_t kMaxNele = 64;
+    static const UInt_t kMaxNmu = 128;
+    static const UInt_t kMaxNele = 128;
 
     // PF jets
     UInt_t njet;

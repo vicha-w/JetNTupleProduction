@@ -369,14 +369,17 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
 
         // Log muon properties before cut
         auto muonP4 = i_muon->p4();
-        b_muon_pt[b_muon_index]   = muonP4.Pt();
-        b_muon_eta[b_muon_index]  = muonP4.Eta();
-        b_muon_phi[b_muon_index]  = muonP4.Phi();
-        b_muon_E[b_muon_index]    = muonP4.E();
-        b_muon_charge[b_muon_index] = i_muon->charge();
-        b_muon_ID[b_muon_index] = i_muon->muonID(mMuonID);
-        b_muon_TIP[b_muon_index] = i_muon->dB(pat::Muon::BS2D);
-        
+
+        if (b_muon_index < kMaxNmu)
+        {
+            b_muon_pt[b_muon_index]   = muonP4.Pt();
+            b_muon_eta[b_muon_index]  = muonP4.Eta();
+            b_muon_phi[b_muon_index]  = muonP4.Phi();
+            b_muon_E[b_muon_index]    = muonP4.E();
+            b_muon_charge[b_muon_index] = i_muon->charge();
+            b_muon_ID[b_muon_index] = i_muon->muonID(mMuonID);
+            b_muon_TIP[b_muon_index] = i_muon->dB(pat::Muon::BS2D);
+        }
         b_muon_index++;
 
         /*
@@ -390,7 +393,6 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         if (RMI >= 0.20) continue;
         */
 
-        /*
         // Tight Muon criteria
         // See https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMuonId#The2011Data
         // "Baseline muon selections for 2011 data (CMSSW 44X and below)"
@@ -402,12 +404,12 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         if (i_muon->dB() >= 0.2) continue;
         //if (fabs(i_muon.muonBestTrack()->dz(i_muon.vertex()->position())) >= 0.2) continue; // required in 2012 data
         if (i_muon->innerTrack()->hitPattern().numberOfValidPixelHits() <= 0) continue;
-        if (i_muon->innerTrack()->hitPattern().trackerLayersWithMeasurement() <= 5) continue;
+        if (i_muon->innerTrack()->hitPattern().trackerLayersWithMeasurement() <= 8) continue;
 
         // REMARKS:
         // Does i_muon.vertex() give out primary vertex? YESSSSS
-        */
 
+        /* Soft Muon criteria are not very popular.
         // Soft Muon criteria
         // See https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMuonId#The2011Data
         // "Baseline muon selections for 2011 data (CMSSW 44X and below) - Soft Muon selection (NEW)"
@@ -417,9 +419,11 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         if (i_muon->innerTrack()->normalizedChi2() >= 1.8) continue;
         if (fabs(i_muon->innerTrack()->dxy(i_muon->vertex())) >= 3) continue;
         if (fabs(i_muon->innerTrack()->dz(i_muon->vertex())) >= 30.) continue;
-
+        */
+        
         if (muonP4.Pt() <= 20.) continue;
         if (fabs(muonP4.Eta()) >= 2.4) continue;
+
         muon_pt[muon_index]   = muonP4.Pt();
         muon_eta[muon_index]  = muonP4.Eta();
         muon_phi[muon_index]  = muonP4.Phi();
@@ -454,13 +458,16 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
 
         auto electronP4 = i_electron->p4();
         // Log electron properties before cut
-        b_electron_pt[b_electron_index]   = electronP4.Pt();
-        b_electron_eta[b_electron_index]  = electronP4.Eta();
-        b_electron_phi[b_electron_index]  = electronP4.Phi();
-        b_electron_E[b_electron_index]    = electronP4.E();
-        b_electron_charge[b_electron_index] = i_electron->charge();
-        b_electron_ID[b_electron_index] = i_electron->electronID(mElectronID);
-        b_electron_TIP[b_electron_index] = i_electron->dB(pat::Electron::BS2D);
+        if (b_electron_index < kMaxNele)
+        {
+            b_electron_pt[b_electron_index]   = electronP4.Pt();
+            b_electron_eta[b_electron_index]  = electronP4.Eta();
+            b_electron_phi[b_electron_index]  = electronP4.Phi();
+            b_electron_E[b_electron_index]    = electronP4.E();
+            b_electron_charge[b_electron_index] = i_electron->charge();
+            b_electron_ID[b_electron_index] = i_electron->electronID(mElectronID);
+            b_electron_TIP[b_electron_index] = i_electron->dB(pat::Electron::BS2D);
+        }
 
         b_electron_index++;
 
@@ -482,13 +489,12 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
         // error: 'vertex_' was not declared in this scope
         // photon (?) conversion rejection
         if (!i_electron->passConversionVeto()) continue;
+        */
 
         double REI = (i_electron->chargedHadronIso() + i_electron->neutralHadronIso() + i_electron->photonIso() ) / (i_electron->p4()).Pt();
-        if (REI >= 0.17) continue;
+        if (REI > 0.15) continue;
 
-        if (electronP4.Pt() <= 20.) continue;
-        if (fabs(electronP4.Eta()) >= 2.5) continue;
-
+        // Electron within \Delta R < 0.1 of muons are rejected
         bool deltaRPassed = true;
         for (auto i_muon = muons.begin(); i_muon != muons.end(); i_muon++)
         {
@@ -498,13 +504,11 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
             if (deltaR <= 0.1) deltaRPassed = false;
         }
         if (!deltaRPassed) continue;
-        */
 
         // Electron criteria
 
         // Transverse IP of the electron (GSF track)
         if (fabs(i_electron->gsfTrack()->dxy(i_electron->vertex()) >= 0.04)) continue;
-
         // Conversion rejection
         if (!i_electron->passConversionVeto()) continue;
         // MVA
@@ -586,11 +590,14 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     {
         auto ak5jetP4 = i_ak5jet->p4();
         // Log jet properties before cut
-        b_jet_pt[b_ak5_index]   = ak5jetP4.Pt();
-        b_jet_eta[b_ak5_index]  = ak5jetP4.Eta();
-        b_jet_phi[b_ak5_index]  = ak5jetP4.Phi();
-        b_jet_btag[b_ak5_index] = i_ak5jet->bDiscriminator(mBTagDiscriminator);
-        b_jet_E[b_ak5_index]    = ak5jetP4.E();
+        if (b_ak5_index < kMaxNjet)
+        {
+            b_jet_pt[b_ak5_index]   = ak5jetP4.Pt();
+            b_jet_eta[b_ak5_index]  = ak5jetP4.Eta();
+            b_jet_phi[b_ak5_index]  = ak5jetP4.Phi();
+            b_jet_btag[b_ak5_index] = i_ak5jet->bDiscriminator(mBTagDiscriminator);
+            b_jet_E[b_ak5_index]    = ak5jetP4.E();
+        }
 
         b_ak5_index++;
 
