@@ -60,7 +60,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
     tree->SetBranchAddress("electron_E",electron_E);
     tree->SetBranchAddress("electron_charge",electron_charge);
 
-    tree->SetBranchAddress("met_pt",&met_pt);
+    tree->SetBranchAddress("met_et",&met_pt);
     //tree->SetBranchAddress("met_eta",&met_eta);
     tree->SetBranchAddress("met_phi",&met_phi);
 
@@ -653,7 +653,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
 					histDeltaDistrib->Fill(Delta);
 					*/
 					Delta = (pnu.Vect() + pnubar.Vect() - METVect.Vect()).Mag();
-					printf("Delta = %lf\n",Delta);
+					//printf("Delta = %lf\n",Delta);
 					double WLeptonRatio1 = ((pnu + leptonPVect).M())/massW;
 					double WLeptonRatio2 = ((pnubar + leptonMVect).M())/massW;
 
