@@ -60,7 +60,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
     tree->SetBranchAddress("electron_E",electron_E);
     tree->SetBranchAddress("electron_charge",electron_charge);
 
-    tree->SetBranchAddress("met_pt",&met_pt);
+    tree->SetBranchAddress("met_et",&met_pt);
     //tree->SetBranchAddress("met_eta",&met_eta);
     tree->SetBranchAddress("met_phi",&met_phi);
 
@@ -341,7 +341,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                 leptonM_eta[m_count] = muon_eta[i];
                 leptonM_phi[m_count] = muon_phi[i];
                 leptonM_E[m_count]   = muon_E[i];
-                leptonM_isMuon[p_count] = true;
+                leptonM_isMuon[m_count] = true;
                 m_count++;
             }
         }
@@ -363,7 +363,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                 leptonM_eta[m_count] = electron_eta[i];
                 leptonM_phi[m_count] = electron_phi[i];
                 leptonM_E[m_count]   = electron_E[i];
-                leptonM_isMuon[p_count] = false;
+                leptonM_isMuon[m_count] = false;
                 m_count++;
             }
         }
@@ -653,7 +653,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
 					histDeltaDistrib->Fill(Delta);
 					*/
 					Delta = (pnu.Vect() + pnubar.Vect() - METVect.Vect()).Mag();
-					printf("Delta = %lf\n",Delta);
+					//printf("Delta = %lf\n",Delta);
 					double WLeptonRatio1 = ((pnu + leptonPVect).M())/massW;
 					double WLeptonRatio2 = ((pnubar + leptonMVect).M())/massW;
 
@@ -692,6 +692,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
 
     outFile.cd();
     outTree.Write();
+    printf("Output tree contains %lld events.\n",outTree.GetEntries());
     //outFile.Close();
     //file->Close();
 }
