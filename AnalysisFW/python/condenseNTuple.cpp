@@ -422,28 +422,28 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
             }
         }
 
-        double *jetPtPt[2] = {&jet1_pt, &jet2_pt};
-        double *jetEtaPt[2] = {&jet1_eta, &jet2_eta};
-        double *jetPhiPt[2] = {&jet1_phi, &jet2_phi};
-        double *jetEPt[2] = {&jet1_E, &jet2_E};
+        Float_t *jetPtPt[2] = {&jet1_pt, &jet2_pt};
+        Float_t *jetEtaPt[2] = {&jet1_eta, &jet2_eta};
+        Float_t *jetPhiPt[2] = {&jet1_phi, &jet2_phi};
+        Float_t *jetEPt[2] = {&jet1_E, &jet2_E};
 
-        double *lepPtPt[2] = {&lepton1_pt, &lepton2_pt};
-        double *lepEtaPt[2] = {&lepton1_eta, &lepton2_eta};
-        double *lepPhiPt[2] = {&lepton1_phi, &lepton2_phi};
-        double *lepEPt[2] = {&lepton1_E, &lepton2_E};
-        int *lepChargePt[2] = {&lepton1_charge, &lepton2_charge};
+        Float_t *lepPtPt[2] = {&lepton1_pt, &lepton2_pt};
+        Float_t *lepEtaPt[2] = {&lepton1_eta, &lepton2_eta};
+        Float_t *lepPhiPt[2] = {&lepton1_phi, &lepton2_phi};
+        Float_t *lepEPt[2] = {&lepton1_E, &lepton2_E};
+        Int_t *lepChargePt[2] = {&lepton1_charge, &lepton2_charge};
 
-        double *topPtPt[2] = {&top1_pt, &top2_pt};
-        double *topEtaPt[2] = {&top1_eta, &top2_eta};
-        double *topPhiPt[2] = {&top1_phi, &top2_phi};
-        double *topEPt[2] = {&top1_E, &top2_E};
+        Float_t *topPtPt[2] = {&top1_pt, &top2_pt};
+        Float_t *topEtaPt[2] = {&top1_eta, &top2_eta};
+        Float_t *topPhiPt[2] = {&top1_phi, &top2_phi};
+        Float_t *topEPt[2] = {&top1_E, &top2_E};
 
-        double *tbarPtPt[2] = {&tbar1_pt, &tbar2_pt};
-        double *tbarEtaPt[2] = {&tbar1_eta, &tbar2_eta};
-        double *tbarPhiPt[2] = {&tbar1_phi, &tbar2_phi};
-        double *tbarEPt[2] = {&tbar1_E, &tbar2_E};
+        Float_t *tbarPtPt[2] = {&tbar1_pt, &tbar2_pt};
+        Float_t *tbarEtaPt[2] = {&tbar1_eta, &tbar2_eta};
+        Float_t *tbarPhiPt[2] = {&tbar1_phi, &tbar2_phi};
+        Float_t *tbarEPt[2] = {&tbar1_E, &tbar2_E};
 
-        double *topMassPt[2] = {&top1_mass, &top2_mass};
+        Float_t *topMassPt[2] = {&top1_mass, &top2_mass};
 
         unsigned short useJetInd[2] = {0,1};
 
