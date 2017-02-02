@@ -5,7 +5,7 @@
 #include <string>
 
 const float bTagDiscrimLevel = 0.244; // CombinedSecondaryVertexLoose
-const double massW = 80.385 // PDG 2016
+const double massW = 80.385; // PDG 2016
 
 void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataTree")
 {
@@ -447,24 +447,24 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
 
         unsigned short useJetInd[2] = {0,1};
 
-        for (int ind = 0; i < 2; i++)
+        for (int ind = 0; ind < 2; ind++)
         {
             TLorentzVector jetb, jetbbar, leptonPVect, leptonMVect, METVect;
-            jetb.setPtEtaPhiE(*jetPtPt[useJetInd[ind]], *jetEtaPt[useJetInd[ind]], *jetPhiPt[useJetInd[ind]], *jetEPt[useJetInd[ind]]);
-            jetbbar.setPtEtaPhiE(*jetPtPt[useJetInd[ind^1]], *jetEtaPt[useJetInd[ind^1]], *jetPhiPt[useJetInd[ind^1]], *jetEPt[useJetInd[ind^1]]);
+            jetb.SetPtEtaPhiE(*jetPtPt[useJetInd[ind]], *jetEtaPt[useJetInd[ind]], *jetPhiPt[useJetInd[ind]], *jetEPt[useJetInd[ind]]);
+            jetbbar.SetPtEtaPhiE(*jetPtPt[useJetInd[ind^1]], *jetEtaPt[useJetInd[ind^1]], *jetPhiPt[useJetInd[ind^1]], *jetEPt[useJetInd[ind^1]]);
 
             if (lepton1_charge > 0)
             {
-                leptonPVect.setPtEtaPhiE(*lepPtPt[0], *lepEtaPt[0], *lepPhiPt[0], *lepEPt[0]);
-                leptonMVect.setPtEtaPhiE(*lepPtPt[1], *lepEtaPt[1], *lepPhiPt[1], *lepEPt[1]);
+                leptonPVect.SetPtEtaPhiE(*lepPtPt[0], *lepEtaPt[0], *lepPhiPt[0], *lepEPt[0]);
+                leptonMVect.SetPtEtaPhiE(*lepPtPt[1], *lepEtaPt[1], *lepPhiPt[1], *lepEPt[1]);
             }
             else
             {
-                leptonPVect.setPtEtaPhiE(*lepPtPt[1], *lepEtaPt[1], *lepPhiPt[1], *lepEPt[1]);
-                leptonMVect.setPtEtaPhiE(*lepPtPt[0], *lepEtaPt[0], *lepPhiPt[0], *lepEPt[0]);
+                leptonPVect.SetPtEtaPhiE(*lepPtPt[1], *lepEtaPt[1], *lepPhiPt[1], *lepEPt[1]);
+                leptonMVect.SetPtEtaPhiE(*lepPtPt[0], *lepEtaPt[0], *lepPhiPt[0], *lepEPt[0]);
             }
 
-            METVect.setPtEtaPhiE(met_pt, 0, met_phi, met_pt);
+            METVect.SetPtEtaPhiE(met_pt, 0, met_phi, met_pt);
 
             double bestDelta = -1.;
             double bestMassTop = -1.;
