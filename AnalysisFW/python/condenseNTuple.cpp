@@ -4,7 +4,8 @@
 #include <stdio.h>
 #include <string>
 
-const float bTagDiscrimLevel = 0.75;
+const float bTagDiscrimLevel = 0.244; // CombinedSecondaryVertexLoose
+const double massW = 80.385 // PDG 2016
 
 void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataTree")
 {
@@ -12,7 +13,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
     TTree *tree = (TTree*) file->Get(treeName);
 
     UInt_t njet, nmu, nele;
-    const int maxElements = 64;
+    const int maxElements = 128;
 
     Float_t jet_pt[maxElements];
     Float_t jet_eta[maxElements];
@@ -65,6 +66,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
     TFile outFile((string("condensed_"+string(fileName)).c_str()),"RECREATE");
     TTree outTree("condensedNTuple","Condensed NTuple");
 
+    // Jets
     Float_t jet1_pt;
     Float_t jet1_eta;
     Float_t jet1_phi;
@@ -77,6 +79,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
     Float_t jet2_E;
     Float_t jet2_bTag;
 
+    // Leptons
     Float_t lepton1_pt;
     Float_t lepton1_eta;
     Float_t lepton1_phi;
@@ -90,6 +93,28 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
     Float_t lepton2_E;
     Int_t lepton2_charge;
     Bool_t lepton2_isMuon;
+
+    // Top candidates
+    Float_t top1_pt;
+    Float_t top1_eta;
+    Float_t top1_phi;
+    Float_t top1_E;
+    Float_t tbar1_pt;
+    Float_t tbar1_eta;
+    Float_t tbar1_phi;
+    Float_t tbar1_E;
+
+    Float_t top2_pt;
+    Float_t top2_eta;
+    Float_t top2_phi;
+    Float_t top2_E;
+    Float_t tbar2_pt;
+    Float_t tbar2_eta;
+    Float_t tbar2_phi;
+    Float_t tbar2_E;
+
+    Float_t top1_mass;
+    Float_t top2_mass;
 
     outTree.Branch("jet1_pt",&jet1_pt,"jet1_pt/F");
     outTree.Branch("jet1_eta",&jet1_eta,"jet1_eta/F");
@@ -120,6 +145,23 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
     outTree.Branch("met_pt",&met_pt,"met_pt/F");
     //outTree.Branch("met_eta",&met_eta,"met_eta/F");
     outTree.Branch("met_phi",&met_phi,"met_phi/F");
+
+    outTree.Branch("top1_pt",&top1_pt,"top1_pt/F");
+    outTree.Branch("top1_eta",&top1_eta,"top1_eta/F");
+    outTree.Branch("top1_phi",&top1_phi,"top1_phi/F");
+    outTree.Branch("tbar1_pt",&tbar1_pt,"tbar1_pt/F");
+    outTree.Branch("tbar1_eta",&tbar1_eta,"tbar1_eta/F");
+    outTree.Branch("tbar1_phi",&tbar1_phi,"tbar1_phi/F");
+
+    outTree.Branch("top2_pt",&top2_pt,"top2_pt/F");
+    outTree.Branch("top2_eta",&top2_eta,"top2_eta/F");
+    outTree.Branch("top2_phi",&top2_phi,"top2_phi/F");
+    outTree.Branch("tbar2_pt",&tbar2_pt,"tbar2_pt/F");
+    outTree.Branch("tbar2_eta",&tbar2_eta,"tbar2_eta/F");
+    outTree.Branch("tbar2_phi",&tbar2_phi,"tbar2_phi/F");
+
+    outTree.Branch("top1_mass",&top1_mass,"top1_mass/F");
+    outTree.Branch("top2_mass",&top2_mass,"top2_mass/F");
 
     Long64_t nentries = tree->GetEntries();
     for (Long64_t entry = 0; entry < nentries; entry++)
@@ -255,7 +297,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
             if (muon_charge[i] > 0)p_count++;
             else m_count++;
         }
-        
+
         for (int i = 0; i < nele; i++)
         {
             if (electron_charge[i] > 0) p_count++;
@@ -263,7 +305,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
         }
 
         if (p_count == 0 || m_count == 0) continue;
-        
+
         const UInt_t leptonSize = 16;
 
         Float_t leptonP_pt[leptonSize];
@@ -379,6 +421,270 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                 lepton2_charge = 1;
             }
         }
+
+        double *jetPtPt[2] = {&jet1_pt, &jet2_pt};
+        double *jetEtaPt[2] = {&jet1_eta, &jet2_eta};
+        double *jetPhiPt[2] = {&jet1_phi, &jet2_phi};
+        double *jetEPt[2] = {&jet1_E, &jet2_E};
+
+        double *lepPtPt[2] = {&lepton1_pt, &lepton2_pt};
+        double *lepEtaPt[2] = {&lepton1_eta, &lepton2_eta};
+        double *lepPhiPt[2] = {&lepton1_phi, &lepton2_phi};
+        double *lepEPt[2] = {&lepton1_E, &lepton2_E};
+        int *lepChargePt[2] = {&lepton1_charge, &lepton2_charge};
+
+        double *topPtPt[2] = {&top1_pt, &top2_pt};
+        double *topEtaPt[2] = {&top1_eta, &top2_eta};
+        double *topPhiPt[2] = {&top1_phi, &top2_phi};
+        double *topEPt[2] = {&top1_E, &top2_E};
+
+        double *tbarPtPt[2] = {&tbar1_pt, &tbar2_pt};
+        double *tbarEtaPt[2] = {&tbar1_eta, &tbar2_eta};
+        double *tbarPhiPt[2] = {&tbar1_phi, &tbar2_phi};
+        double *tbarEPt[2] = {&tbar1_E, &tbar2_E};
+
+        double *topMassPt[2] = {&top1_mass, &top2_mass};
+
+        unsigned short useJetInd[2] = {0,1};
+
+        for (int ind = 0; i < 2; i++)
+        {
+            TLorentzVector jetb, jetbbar, leptonPVect, leptonMVect, METVect;
+            jetb.setPtEtaPhiE(*jetPtPt[useJetInd[ind]], *jetEtaPt[useJetInd[ind]], *jetPhiPt[useJetInd[ind]], *jetEPt[useJetInd[ind]]);
+            jetbbar.setPtEtaPhiE(*jetPtPt[useJetInd[ind^1]], *jetEtaPt[useJetInd[ind^1]], *jetPhiPt[useJetInd[ind^1]], *jetEPt[useJetInd[ind^1]]);
+
+            if (lepton1_charge > 0)
+            {
+                leptonPVect.setPtEtaPhiE(*lepPtPt[0], *lepEtaPt[0], *lepPhiPt[0], *lepEPt[0]);
+                leptonMVect.setPtEtaPhiE(*lepPtPt[1], *lepEtaPt[1], *lepPhiPt[1], *lepEPt[1]);
+            }
+            else
+            {
+                leptonPVect.setPtEtaPhiE(*lepPtPt[1], *lepEtaPt[1], *lepPhiPt[1], *lepEPt[1]);
+                leptonMVect.setPtEtaPhiE(*lepPtPt[0], *lepEtaPt[0], *lepPhiPt[0], *lepEPt[0]);
+            }
+
+            METVect.setPtEtaPhiE(met_pt, 0, met_phi, met_pt);
+
+            double bestDelta = -1.;
+            double bestMassTop = -1.;
+            double deltaRBestMassTop1, deltaRBestMassTop2;
+
+            double a[4], b[4], c[3][3], dp[3][3], d[3][3], h[5];
+			double Eb, Ebbar, Elp, Elm;
+			double Emetx, Emety;
+
+			double pbx, pby, pbz;
+			double pbbarx, pbbary, pbbarz;
+			double plpx, plpy, plpz;
+			double plmx, plmy, plmz;
+
+			double massb, massbbar, masslp, masslm;
+			double massWp, massWm, massnu, massnubar;
+
+            Eb    = jetb.E();
+            Ebbar = jetbbar.E();
+            Elp   = leptonPVect.E();
+            Elm   = leptonMVect.E();
+
+            Emetx = METVect.X();
+            Emety = METVect.Y();
+
+            pbx = jetb.Px();
+            pby = jetb.Py();
+            pbz = jetb.Pz();
+            pbbarx = jetbbar.Px();
+            pbbary = jetbbar.Py();
+            pbbarz = jetbbar.Pz();
+            plpx = leptonPVect.Px();
+            plpy = leptonPVect.Py();
+            plpz = leptonPVect.Pz();
+            plmx = leptonMVect.Px();
+            plmy = leptonMVect.Py();
+            plmz = leptonMVect.Pz();
+
+            massb = jetb.M();
+            massbbar = jetbbar.M();
+            masslp = leptonPVect.M();
+            masslm = leptonMVect.M();
+
+            massWp = massW;
+            massWm = massW;
+            massnu = 0;
+            massnubar = 0;
+
+            TLorentzVector topCand;
+            TLorentzVector tbarCand;
+
+            for (double massTop = 100.; massTop <= 400.; massTop += 1.)
+            {
+                double pnux, pnuy, pnuz;
+				double pnubarx, pnubary, pnubarz;
+				TLorentzVector pnu, pnubar;
+
+                a[0] = (Eb + Elp)*(massW*massW - masslp*masslp - massnu*massnu)
+						- Elp*(massTop*massTop - massb*massb - masslp*masslp - massnu*massnu)
+						+ 2*Eb*Elp*Elp - 2*Elp*(pbx*plpx + pby*plpy + pbz*plpz);
+                a[1] = 2*(Eb*plpx - Elp*pbx);
+				a[2] = 2*(Eb*plpy - Elp*pby);
+				a[3] = 2*(Eb*plpz - Elp*pbz);
+				b[0] = (Ebbar + Elm)*(massW*massW - masslm*masslm - massnubar*massnubar)
+                        - Elm*(massTop*massTop - massbbar*massbbar - masslm*masslm - massnubar*massnubar)
+                        + 2*Ebbar*Elm*Elm - 2*Elm*(pbbarx*plmx + pbbary*plmy + pbbarz*plmz);
+				b[1] = 2*(Ebbar*plmx - Elm*pbbarx);
+				b[2] = 2*(Ebbar*plmy - Elm*pbbary);
+				b[3] = 2*(Ebbar*plmz - Elm*pbbarz);
+				c[2][2] = (massWp*massWp - masslp*masslp - massnu*massnu)*(massWp*massWp - masslp*masslp - massnu*massnu)
+                        - 4*(Elp*Elp - plpz*plpz)*(a[0]*a[0]/a[3]/a[3])
+                        - 4*(massWp*massWp - masslp*masslp - massnu*massnu)*plpz*a[0]/a[3];
+				c[2][1] = 4*(massWp*massWp - masslp*masslp - massnu*massnu)*(plpx - plpz*a[1]/a[3])
+                        -8*(Elp*Elp - plpz*plpz)*a[0]*a[1]/a[3]/a[3] - 8*(plpx*plpz*a[0]/a[3]);
+				c[2][0] = -4*(Elp*Elp - plpx*plpx) - 4*(Elp*Elp - plpz*plpz)*a[1]*a[1]/a[3]/a[3]
+                        -8*plpx*plpz*a[1]/a[3];
+				c[1][1] = 4*(massWp*massWp - masslp*masslp - massnu*massnu)*(plpy - plpz*a[2]/a[3])
+                        -8*(Elp*Elp - plpz*plpz)*a[0]*a[2]/a[3]/a[3] - 8*plpy*plpz*a[0]/a[3];
+				c[1][0] = -8*(Elp*Elp - plpz*plpz)*a[1]*a[2]/a[3]/a[3] + 8*plpz*plpy
+                        -8*plpx*plpz*a[2]/a[3] - 8*plpy*plpz*a[1]/a[3];
+				c[0][0] = -4*(Elp*Elp - plpy*plpy) - 4*(Elp*Elp - plpz*plpz)*a[2]*a[2]/a[3]/a[3]
+                        -8*plpy*plpz*a[2]/a[3];
+				dp[2][2] = (massWm*massWm - masslm*masslm - massnubar*massnubar)*(massWm*massWm - masslm*masslm - massnubar*massnubar)
+                        - 4*(Elm*Elm - plmz*plmz)*b[0]*b[0]/b[3]/b[3]
+                        - 4*(massWm*massWm - masslm*masslm - massnubar*massnubar)*plmz*b[0]/b[3];
+				dp[2][1] = 4*(massW*massW - masslm*masslm - massnubar*massnubar)*(plmx - plmz*b[1]/b[3])
+                        - 8*(Elm*Elm - plmz*plmz)*b[0]*b[1]/b[3]/b[3] - 8*plmx*plmz*b[0]/b[3];
+				dp[2][0] = -4*(Elm*Elm - plmx*plmx) - 4*(Elm*Elm - plmz*plmz)*b[1]*b[1]/b[3]/b[3]
+                        - 8*plmx*plmz*b[1]/b[3];
+				dp[1][1] = 4*(massWm*massWm - masslm*masslm - massnubar*massnubar)*(plmy - plmz*b[2]/b[3])
+                        - 8*(Elm*Elm - plmz*plmz)*b[0]*b[2]/b[3]/b[3] - 8*plmy*plmz*b[0]/b[3];
+				dp[1][0] = -8*(Elm*Elm - plmz*plmz)*b[1]*b[2]/b[3]/b[3] + 8*plmx*plmy
+                        - 8*plmx*plmz*b[2]/b[3] - 8*plmy*plmz*b[1]/b[3];
+				dp[0][0] = -4*(Elm*Elm - plmy*plmy) - 4*(Elm*Elm - plmz*plmz)*b[2]*b[2]/b[3]/b[3]
+                        - 8*plmy*plmz*b[2]/b[3];
+				d[2][2] = dp[2][2] + Emetx*Emetx*dp[2][0] + Emety*Emety*dp[0][0] +Emetx*Emety*dp[1][0]
+                        + Emetx*dp[2][1] + Emety*dp[1][1];
+				d[2][1] = -dp[2][1] - 2*Emetx*dp[2][0] - Emety*dp[1][0];
+				d[2][0] = dp[2][0];
+				d[1][1] = -dp[1][1] - 2*Emety*dp[0][0] - Emetx*dp[1][0];
+				d[1][0] = dp[1][0];
+				d[0][0] = dp[0][0];
+
+                h[4] = c[0][0]*c[0][0]*d[2][2]*d[2][2]
+                        + c[1][1]*d[2][2]*(c[1][1]*d[0][0] - c[0][0]*d[1][1])
+                        + c[0][0]*c[2][2]*(d[1][1]*d[1][1] - 2*d[0][0]*d[2][2])
+                        + c[2][2]*d[0][0]*(c[2][2]*d[0][0] - c[1][1]*d[1][1]);
+				h[3] = c[0][0]*d[2][1]*(2*c[0][0]*d[2][2] - c[1][1]*d[1][1])
+                        + c[0][0]*d[1][1]*(2*c[2][2]*d[1][0] + c[2][1]*d[1][1])
+                        + c[2][2]*d[0][0]*(2*c[2][1]*d[0][0] - c[1][1]*d[1][0])
+                        - c[0][0]*d[2][2]*(c[1][1]*d[1][0] + c[1][0]*d[1][1])
+                        - 2*c[0][0]*d[0][0]*(c[2][2]*d[2][1] + c[2][1]*d[2][2])
+                        - d[0][0]*d[1][1]*(c[1][1]*c[2][1] + c[1][0]*c[2][2])
+                        + c[1][1]*d[0][0]*(c[1][1]*d[2][1] + 2*c[1][0]*d[2][2]);
+				h[2] = c[0][0]*c[0][0]*(2*d[2][2]*d[2][0] + d[2][1]*d[2][1])
+                        - c[0][0]*d[2][1]*(c[1][1]*d[1][0] + c[1][0]*d[1][1])
+                        + c[1][1]*d[2][0]*(c[1][1]*d[0][0] - c[0][0]*d[1][1])
+                        + c[0][0]*d[1][0]*(c[2][2]*d[1][0] - c[1][0]*d[2][2])
+                        + c[0][0]*d[1][1]*(2*c[2][1]*d[1][0] + c[2][0]*d[1][1])
+                        + (2*c[2][2]*c[2][0] + c[2][1]*c[2][1])*d[0][0]*d[0][0]
+                        - 2*c[0][0]*d[0][0]*(c[2][2]*d[2][0] + c[2][1]*d[2][1] + c[2][0]*d[2][2])
+                        + c[1][0]*d[0][0]*(2*c[1][1]*d[2][1] + c[1][0]*d[2][2])
+                        - d[0][0]*d[1][0]*(c[1][1]*c[2][1] + c[1][0]*c[2][2])
+                        - d[0][0]*d[1][1]*(c[1][1]*c[2][0] + c[1][0]*c[2][1]);
+				h[1] = c[0][0]*d[2][1]*(2*c[0][0]*d[2][0] - c[1][0]*d[1][0])
+                        - c[0][0]*d[2][0]*(c[1][1]*d[1][0] + c[1][0]*d[1][1])
+                        + c[0][0]*d[1][0]*(c[2][1]*d[1][0] + 2*c[2][0]*d[1][1])
+                        - 2*c[0][0]*d[0][0]*(c[2][1]*d[2][0] + c[2][0]*d[2][1])
+                        + c[1][0]*d[0][0]*(2*c[1][1]*d[2][0] + c[1][0]*d[2][1])
+                        - c[2][0]*d[0][0]*(2*c[2][1]*d[0][0] - c[1][0]*d[1][1])
+                        - d[0][0]*d[1][0]*(c[1][1]*c[2][0] + c[1][0]*c[2][1]);
+				h[0] = c[0][0]*c[0][0]*d[2][0]*d[2][0]
+                        + c[1][0]*d[2][0]*(c[1][0]*d[0][0] - c[0][0]*d[1][0])
+                        + c[2][0]*d[1][0]*(c[0][0]*d[1][0] - c[1][0]*d[0][0])
+                        + c[2][0]*d[0][0]*(c[2][0]*d[0][0] - 2*c[0][0]*d[2][0]);
+
+				vector<double> pnuxSol;
+
+				//! Get the solution by using ROOT::Math::Polynomial object
+				//! and ROOT::Math::Polynomial.FindRealRoots() here.
+
+				ROOT::Math::Polynomial pnuxPoly(h[0],h[1],h[2],h[3],h[4]);
+				pnuxSol = pnuxPoly.FindRealRoots();
+				//printf("pnuxSol has %d solutions\n",(int)pnuxSol.size());
+
+				//for (int i=0; i < (int) pnuxSol.size(); i++) printf("%lf\t",(double) pnuxSol.at(i));
+				//printf("\n");
+
+				//solutionCount += (int) pnuxSol.size();
+				//histpnuxsolCount->Fill((int)pnuxSol.size());
+
+                for (int solCount = 0; solCount < (int) pnuxSol.size(); solCount++)
+				{
+					bool uniqueSol = true;
+					for (int i=0;i<solCount;i++) if ((double)pnuxSol.at(i) == (double)pnuxSol.at(solCount)) uniqueSol = false;
+					if (!uniqueSol) continue;
+
+					pnux    = (double) pnuxSol.at(solCount);
+					pnubarx = Emetx - pnux;
+
+					double c0, c1, c2;
+					double d0, d1, d2;
+
+					c0 = c[0][0];
+					c1 = c[1][0]*pnux + c[1][1];
+					c2 = c[2][0]*pnux*pnux + c[2][1]*pnux + c[2][2];
+
+					d0 = d[0][0];
+					d1 = d[1][0]*pnux +d[1][1];
+					d2 = d[2][0]*pnux*pnux + d[2][1]*pnux + d[2][2];
+
+					pnuy    = (c0*d2 - c2*d0)/(c1*d0 - c0*d1);
+					pnubary = Emety - pnuy;
+
+					pnuz    = -(a[0] + a[1]*pnux + a[2]*pnuy)/a[3];
+					pnubarz = -(b[0] + b[1]*pnubarx + b[2]*pnubary)/b[3];
+
+					pnu.SetPxPyPzE(pnux,pnuy,pnuz,TMath::Sqrt(pnux*pnux + pnuy*pnuy + pnuz*pnuz));
+					pnubar.SetPxPyPzE(pnubarx,pnubary,pnubarz,TMath::Sqrt(pnubarx*pnubarx + pnubary*pnubary + pnubarz*pnubarz));
+
+					double Delta = 0;
+					/*
+					for (int i=0;i<4;i++) Delta += (pnu[i] - pnubar[i])*(pnu[i] - pnubar[i]);
+					Delta = TMath::Sqrt(Delta);
+					histDeltaDistrib->Fill(Delta);
+					*/
+					Delta = (pnu.Vect() + pnubar.Vect() - METVect.Vect()).Mag();
+					printf("Delta = %lf\n",Delta);
+					double WLeptonRatio1 = ((pnu + leptonPVect).M())/massW;
+					double WLeptonRatio2 = ((pnubar + leptonMVect).M())/massW;
+
+					if (bestDelta < 0. || Delta < bestDelta)
+					{
+						bestDelta = Delta;
+						bestMassTop = massTop;
+						deltaRBestMassTop1 = leptonPVect.DeltaR(pnu);
+						deltaRBestMassTop2 = leptonMVect.DeltaR(pnubar);
+                        topCand = leptonPVect + jetb + pnu;
+                        tbarCand = leptonMVect + jetbbar + pnubar;
+					}
+				}
+            }
+
+            *topMassPt[ind] = bestMassTop;
+
+            if (bestMassTop > 0.)
+            {
+                *topPtPt[ind]  = topCand.Pt();
+                *topEtaPt[ind] = topCand.Eta();
+                *topPhiPt[ind] = topCand.Phi();
+                *topEPt[ind]   = topCand.E();
+
+                *tbarPtPt[ind]  = tbarCand.Pt();
+                *tbarEtaPt[ind] = tbarCand.Eta();
+                *tbarPhiPt[ind] = tbarCand.Phi();
+                *tbarEPt[ind]   = tbarCand.E();
+            }
+        }
+
+        if (!(top1_mass > 0 && top2_mass > 0)) continue;
 
         outTree.Fill();
     }
