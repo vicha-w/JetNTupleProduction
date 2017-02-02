@@ -3,6 +3,7 @@
 #include "TTree.h"
 #include <stdio.h>
 #include <string>
+#include <Math/Polynomial.h>
 
 const float bTagDiscrimLevel = 0.244; // CombinedSecondaryVertexLoose
 const double massW = 80.385; // PDG 2016
