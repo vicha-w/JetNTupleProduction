@@ -6,11 +6,11 @@
 
 isMC = True # MC or data
 customGlobalTag = 'START53_LV6::All'
-customIndexFile = ''
-customOutFileName = ''
+customIndexFile = 'OpenIndex/DY/DYJetsToLL_M-10To50_TuneZ2_7TeV-pythia6_00000_1_fragment.txt'
+customOutFileName = 'OpenTuple/DYJetsToLL_M-10To50_TuneZ2_7TeV-pythia6_00000_1_test_fragment.root'
 customBTagDiscrim = 'combinedSecondaryVertexBJetTags'
 
-numberOfEvents = -1
+numberOfEvents = 50
 
 ## Import skeleton process
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
@@ -252,7 +252,7 @@ process.p = cms.Path(
 # Change number of events here:
 process.maxEvents.input = numberOfEvents
 
-process.MessageLogger.cerr.FwkReport.reportEvery = 5
+process.MessageLogger.cerr.FwkReport.reportEvery = 1
 
 # Output file
 if customOutFileName == '' or type(customOutFileName) != str:
