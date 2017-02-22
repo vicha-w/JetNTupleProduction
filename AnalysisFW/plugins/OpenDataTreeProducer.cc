@@ -758,6 +758,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     //! Here we are interested in ak5 jets only.
     //! Subject to cleanup.
 
+    /*
     // Four leading AK7 Jets
     edm::Handle< std::vector< pat::Jet > > ak7_handle;
     event_obj.getByLabel(mPFak7JetsName, ak7_handle);
@@ -813,6 +814,8 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     // Number of saved jets in the event
     njet_ak7 = ak7_index;
 
+    */
+    
     // MET
     Handle< PFMETCollection > met_handle;
     event_obj.getByLabel("pfMet", met_handle);
@@ -827,11 +830,8 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     // MET selection cut at et > 40.
     //if (met_et <= 40.) return;
 
-    
-
     // Finally, fill the tree
-    if (njet >= (unsigned)mMinNPFJets && 
-        njet_ak7 >= (unsigned)mMinNPFJets ) {            
+    if (njet >= (unsigned)mMinNPFJets) {            
             mTree->Fill();
     }
 }
