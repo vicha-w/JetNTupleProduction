@@ -272,6 +272,9 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     run = event_obj.id().run();
     lumi = event_obj.luminosityBlock();
     event = event_obj.id().event();
+    printf("Run: %d\n", (int) run);
+    printf("LumiSection: %d\n", (int) lumi);
+    printf("Event: %d\n", (int) event);
 
     // Triggers
     edm::Handle<edm::TriggerResults>   triggerResultsHandle_;
@@ -363,9 +366,6 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     std::vector<pat::Muon> muons(muon_handle->begin(), muon_handle->end());
     int muon_index = 0;
     int b_muon_index = 0;
-    
-    printf("Number of muons: %d\n",(int)muons.size());
-
     for (auto i_muon = muons.begin(); i_muon != muons.end(); i_muon++)
     {
 	// USE LOOSE MUON CRITERIA
@@ -444,6 +444,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     }
     nmu = muon_index;
     b_nmu = b_muon_index;
+    printf("Number of muons: %d\n", (int) nmu);
 
     // Electrons later
     edm::Handle<std::vector<pat::Electron>> electron_handle;
@@ -451,8 +452,6 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     std::vector<pat::Electron> electrons(electron_handle->begin(), electron_handle->end());
     int electron_index = 0;
     int b_electron_index = 0;
-
-    printf("Number of electrons: %d\n",(int) electrons.size());
 
     for (auto i_electron = electrons.begin(); i_electron != electrons.end(); i_electron++)
     {
@@ -572,6 +571,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     }
     nele = electron_index;
     b_nele = b_electron_index;
+    printf("Number of electrons: %d\n", (int) nele);
 
     // PF AK5 Jets
 
@@ -589,8 +589,6 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     Handle<reco::VertexCollection> recVtxs;
     event_obj.getByLabel(mOfflineVertices, recVtxs);
 
-    printf("Number of jets: %d\n",(int)patjets.size());
-
     // Iterate over the jets of the event
     for (auto i_ak5jet = patjets.begin(); i_ak5jet != patjets.end(); ++i_ak5jet) 
     {
@@ -604,7 +602,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
             b_jet_btag[b_ak5_index] = i_ak5jet->bDiscriminator(mBTagDiscriminator);
             b_jet_E[b_ak5_index]    = ak5jetP4.E();
             b_ak5_index++;
-            printf("%f %f %f %f %f\n",ak5jetP4.Pt(),ak5jetP4.Eta(),ak5jetP4.Phi(),i_ak5jet->bDiscriminator(mBTagDiscriminator),ak5jetP4.E());
+            //printf("%f %f %f %f %f\n",ak5jetP4.Pt(),ak5jetP4.Eta(),ak5jetP4.Phi(),i_ak5jet->bDiscriminator(mBTagDiscriminator),ak5jetP4.E());
         }
 
         // Skip the current iteration if jet is not selected
@@ -754,6 +752,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     // Number of selected jets in the event
     njet = ak5_index;
     b_njet = b_ak5_index;
+    printf("Number of jets: %d\n", (int) njet);
 
     //! Here we are interested in ak5 jets only.
     //! Subject to cleanup.
@@ -815,7 +814,7 @@ void OpenDataTreeProducer::analyze(edm::Event const &event_obj,
     njet_ak7 = ak7_index;
 
     */
-    
+
     // MET
     Handle< PFMETCollection > met_handle;
     event_obj.getByLabel("pfMet", met_handle);
