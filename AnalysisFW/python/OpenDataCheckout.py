@@ -239,7 +239,7 @@ process.hltFilter = cms.EDFilter('HLTHighLevel',
 # Run everything
 process.p = cms.Path(
     process.goodOfflinePrimaryVertices*
-    process.hltFilter *
+    # process.hltFilter *
     process.trackingFailureFilter *
     process.patDefaultSequence *
     process.ak5ak7
