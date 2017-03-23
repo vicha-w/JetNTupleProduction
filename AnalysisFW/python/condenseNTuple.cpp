@@ -481,6 +481,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
         Float_t *lepEPt[2] = {&lepton1_E, &lepton2_E};
         Float_t *lepChargePt[2] = {&lepton1_charge, &lepton2_charge};
 
+        /*
         Float_t *topPtPt[2] = {&top1_pt, &top2_pt};
         Float_t *topEtaPt[2] = {&top1_eta, &top2_eta};
         Float_t *topPhiPt[2] = {&top1_phi, &top2_phi};
@@ -492,6 +493,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
         Float_t *tbarEPt[2] = {&tbar1_E, &tbar2_E};
 
         Float_t *topMassPt[2] = {&top1_mass, &top2_mass};
+        */
 
         unsigned short useJetInd[2] = {0,1};
 
