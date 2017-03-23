@@ -688,7 +688,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                     DeltaTop = TMath::Abs(massTop - tbarVect.M()) > DeltaTop ? TMath::Abs(massTop - tbarVect.M()) : DeltaTop;
 
                     bool DeltaIsLower;
-                    if (offShell) DeltaIsLower = Delta*DeltaTop < bestDelta*bestDeltaTop;
+                    if (!offShell) DeltaIsLower = Delta*DeltaTop < bestDelta*bestDeltaTop;
                     else DeltaIsLower = Delta < bestDelta;
 
 					if (bestDelta < 0. || DeltaIsLower)
