@@ -85,14 +85,14 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
     Float_t lepton1_eta;
     Float_t lepton1_phi;
     Float_t lepton1_E;
-    Int_t lepton1_charge;
+    Float_t lepton1_charge;
     Bool_t lepton1_isMuon;
 
     Float_t lepton2_pt;
     Float_t lepton2_eta;
     Float_t lepton2_phi;
     Float_t lepton2_E;
-    Int_t lepton2_charge;
+    Float_t lepton2_charge;
     Bool_t lepton2_isMuon;
 
     // Top candidates
@@ -133,14 +133,14 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
     outTree.Branch("lepton1_eta",&lepton1_eta,"lepton1_eta/F");
     outTree.Branch("lepton1_phi",&lepton1_phi,"lepton1_phi/F");
     outTree.Branch("lepton1_E",&lepton1_E,"lepton1_E/F");
-    outTree.Branch("lepton1_charge",&lepton1_charge,"lepton1_charge/I");
+    outTree.Branch("lepton1_charge",&lepton1_charge,"lepton1_charge/F");
     outTree.Branch("lepton1_isMuon",&lepton1_isMuon,"lepton1_isMuon/O");
 
     outTree.Branch("lepton2_pt",&lepton2_pt,"lepton2_pt/F");
     outTree.Branch("lepton2_eta",&lepton2_eta,"lepton2_eta/F");
     outTree.Branch("lepton2_phi",&lepton2_phi,"lepton2_phi/F");
     outTree.Branch("lepton2_E",&lepton2_E,"lepton2_E/F");
-    outTree.Branch("lepton2_charge",&lepton2_charge,"lepton2_charge/I");
+    outTree.Branch("lepton2_charge",&lepton2_charge,"lepton2_charge/F");
     outTree.Branch("lepton2_isMuon",&lepton2_isMuon,"lepton2_isMuon/O");
 
     outTree.Branch("met_pt",&met_pt,"met_pt/F");
@@ -150,21 +150,26 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
     outTree.Branch("top1_pt",&top1_pt,"top1_pt/F");
     outTree.Branch("top1_eta",&top1_eta,"top1_eta/F");
     outTree.Branch("top1_phi",&top1_phi,"top1_phi/F");
+    outTree.Branch("top1_E",&top1_E,"top1_E/F");
     outTree.Branch("tbar1_pt",&tbar1_pt,"tbar1_pt/F");
     outTree.Branch("tbar1_eta",&tbar1_eta,"tbar1_eta/F");
     outTree.Branch("tbar1_phi",&tbar1_phi,"tbar1_phi/F");
+    outTree.Branch("tbar1_E",&tbar1_E,"tbar1_E/F");
 
     outTree.Branch("top2_pt",&top2_pt,"top2_pt/F");
     outTree.Branch("top2_eta",&top2_eta,"top2_eta/F");
     outTree.Branch("top2_phi",&top2_phi,"top2_phi/F");
+    outTree.Branch("top2_E",&top2_E,"top2_E/F");
     outTree.Branch("tbar2_pt",&tbar2_pt,"tbar2_pt/F");
     outTree.Branch("tbar2_eta",&tbar2_eta,"tbar2_eta/F");
     outTree.Branch("tbar2_phi",&tbar2_phi,"tbar2_phi/F");
+    outTree.Branch("tbar2_E",&tbar2_E,"tbar2_E/F");
 
     outTree.Branch("top1_mass",&top1_mass,"top1_mass/F");
     outTree.Branch("top2_mass",&top2_mass,"top2_mass/F");
 
     Long64_t nentries = tree->GetEntries();
+    int validLEntries = 0;
     for (Long64_t entry = 0; entry < nentries; entry++)
     {
         tree->GetEntry(entry);
@@ -320,6 +325,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
         }
 
         if (p_count == 0 || m_count == 0) continue;
+        else validLEntries++;
 
         const UInt_t leptonSize = 16;
 
@@ -410,14 +416,14 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                 lepton1_phi = leptonP_phi[bestlepP];
                 lepton1_E   = leptonP_E[bestlepP];
                 lepton1_isMuon = leptonP_isMuon[bestlepP];
-                lepton1_charge = 1;
+                lepton1_charge = 1.;
 
                 lepton2_pt  = leptonM_pt[bestlepM];
                 lepton2_eta = leptonM_eta[bestlepM];
                 lepton2_phi = leptonM_phi[bestlepM];
                 lepton2_E   = leptonM_E[bestlepM];
                 lepton2_isMuon = leptonM_isMuon[bestlepM];
-                lepton2_charge = -1;
+                lepton2_charge = -1.;
             }
             else
             {
@@ -426,14 +432,14 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                 lepton1_phi = leptonM_phi[bestlepM];
                 lepton1_E   = leptonM_E[bestlepM];
                 lepton1_isMuon = leptonM_isMuon[bestlepP];
-                lepton1_charge = -1;
+                lepton1_charge = -1.;
 
                 lepton2_pt  = leptonP_pt[bestlepP];
                 lepton2_eta = leptonP_eta[bestlepP];
                 lepton2_phi = leptonP_phi[bestlepP];
                 lepton2_E   = leptonP_E[bestlepP];
                 lepton2_isMuon = leptonP_isMuon[bestlepM];
-                lepton2_charge = 1;
+                lepton2_charge = 1.;
             }
         }
 
@@ -446,7 +452,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
         Float_t *lepEtaPt[2] = {&lepton1_eta, &lepton2_eta};
         Float_t *lepPhiPt[2] = {&lepton1_phi, &lepton2_phi};
         Float_t *lepEPt[2] = {&lepton1_E, &lepton2_E};
-        Int_t *lepChargePt[2] = {&lepton1_charge, &lepton2_charge};
+        Float_t *lepChargePt[2] = {&lepton1_charge, &lepton2_charge};
 
         Float_t *topPtPt[2] = {&top1_pt, &top2_pt};
         Float_t *topEtaPt[2] = {&top1_eta, &top2_eta};
@@ -482,6 +488,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
             METVect.SetPtEtaPhiE(met_pt, 0, met_phi, met_pt);
 
             double bestDelta = -1.;
+            double bestDeltaTop = -1.;
             double bestMassTop = -1.;
             double deltaRBestMassTop1, deltaRBestMassTop2;
 
@@ -531,7 +538,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
             TLorentzVector topCand;
             TLorentzVector tbarCand;
 
-            for (double massTop = 100.; massTop <= 400.; massTop += 1.)
+            for (double massTop = 100.; massTop <= 400.; massTop += 0.1)
             {
                 double pnux, pnuy, pnuz;
 				double pnubarx, pnubary, pnubarz;
@@ -661,6 +668,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
 					pnubar.SetPxPyPzE(pnubarx,pnubary,pnubarz,TMath::Sqrt(pnubarx*pnubarx + pnubary*pnubary + pnubarz*pnubarz));
 
 					double Delta = 0;
+                    double DeltaTop = 0;
 					/*
 					for (int i=0;i<4;i++) Delta += (pnu[i] - pnubar[i])*(pnu[i] - pnubar[i]);
 					Delta = TMath::Sqrt(Delta);
