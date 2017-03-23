@@ -7,6 +7,7 @@
 
 const float bTagDiscrimLevel = 0.244; // CombinedSecondaryVertexLoose
 const double massW = 80.385; // PDG 2016
+const bool offShell = true; // Assume top quarks are off-shell. (Don't satisfy E^2 = m^2 + p^2)
 
 void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataTree")
 {
@@ -488,7 +489,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
             METVect.SetPtEtaPhiE(met_pt, 0, met_phi, met_pt);
 
             double bestDelta = -1.;
-            double bestDeltaTop = -1.;
+            double bestDeltaTop = 0.;
             double bestMassTop = -1.;
             double deltaRBestMassTop1, deltaRBestMassTop2;
 
@@ -686,10 +687,14 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                     DeltaTop = TMath::Abs(massTop - topVect.M());
                     DeltaTop = TMath::Abs(massTop - tbarVect.M()) > DeltaTop ? TMath::Abs(massTop - tbarVect.M()) : DeltaTop;
 
-					if (bestDelta < 0. || Delta*DeltaTop < bestDelta*bestDeltaTop)
+                    bool DeltaIsLower;
+                    if (offShell) DeltaIsLower = Delta*DeltaTop < bestDelta*bestDeltaTop;
+                    else DeltaIsLower = Delta < bestDelta;
+
+					if (bestDelta < 0. || DeltaIsLower)
 					{
 						bestDelta = Delta;
-                        bestDeltaTop = DeltaTop;
+                        if (!offShell) bestDeltaTop = DeltaTop;
 						bestMassTop = massTop;
 						deltaRBestMassTop1 = leptonPVect.DeltaR(pnu);
 						deltaRBestMassTop2 = leptonMVect.DeltaR(pnubar);
