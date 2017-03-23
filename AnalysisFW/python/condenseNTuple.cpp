@@ -97,6 +97,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
     Bool_t lepton2_isMuon;
 
     // Top candidates
+    /*
     Float_t top1_pt;
     Float_t top1_eta;
     Float_t top1_phi;
@@ -117,6 +118,18 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
 
     Float_t top1_mass;
     Float_t top2_mass;
+    */
+
+    Float_t top_pt;
+    Float_t top_eta;
+    Float_t top_phi;
+    Float_t top_E;
+    Float_t tbar_pt;
+    Float_t tbar_eta;
+    Float_t tbar_phi;
+    Float_t tbar_E;
+    
+    Float_t top_mass;
 
     outTree.Branch("jet1_pt",&jet1_pt,"jet1_pt/F");
     outTree.Branch("jet1_eta",&jet1_eta,"jet1_eta/F");
@@ -148,6 +161,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
     //outTree.Branch("met_eta",&met_eta,"met_eta/F");
     outTree.Branch("met_phi",&met_phi,"met_phi/F");
 
+    /*
     outTree.Branch("top1_pt",&top1_pt,"top1_pt/F");
     outTree.Branch("top1_eta",&top1_eta,"top1_eta/F");
     outTree.Branch("top1_phi",&top1_phi,"top1_phi/F");
@@ -168,6 +182,18 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
 
     outTree.Branch("top1_mass",&top1_mass,"top1_mass/F");
     outTree.Branch("top2_mass",&top2_mass,"top2_mass/F");
+    */
+
+    outTree.Branch("top_pt",&top_pt,"top_pt/F");
+    outTree.Branch("top_eta",&top_eta,"top_eta/F");
+    outTree.Branch("top_phi",&top_phi,"top_phi/F");
+    outTree.Branch("top_E",&top_E,"top_E/F");
+    outTree.Branch("tbar_pt",&tbar_pt,"tbar_pt/F");
+    outTree.Branch("tbar_eta",&tbar_eta,"tbar_eta/F");
+    outTree.Branch("tbar_phi",&tbar_phi,"tbar_phi/F");
+    outTree.Branch("tbar_E",&tbar_E,"tbar_E/F");
+
+    outTree.Branch("top_mass",&top_mass,"top_mass/F");
 
     Long64_t nentries = tree->GetEntries();
     int validLEntries = 0;
@@ -469,6 +495,11 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
 
         unsigned short useJetInd[2] = {0,1};
 
+        double bestDelta = -1.;
+        double bestDeltaTop = 0.;
+        double bestMassTop = -1.;
+        double deltaRBestMassTop1, deltaRBestMassTop2;
+
         for (int ind = 0; ind < 2; ind++)
         {
             TLorentzVector jetb, jetbbar, leptonPVect, leptonMVect, METVect;
@@ -488,10 +519,12 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
 
             METVect.SetPtEtaPhiE(met_pt, 0, met_phi, met_pt);
 
+            /*
             double bestDelta = -1.;
             double bestDeltaTop = 0.;
             double bestMassTop = -1.;
             double deltaRBestMassTop1, deltaRBestMassTop2;
+            */
 
             double a[4], b[4], c[3][3], dp[3][3], d[3][3], h[5];
 			double Eb, Ebbar, Elp, Elm;
@@ -704,6 +737,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
 				}
             }
 
+            /*
             *topMassPt[ind] = bestMassTop;
 
             if (bestMassTop > 0.)
@@ -718,9 +752,20 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                 *tbarPhiPt[ind] = tbarCand.Phi();
                 *tbarEPt[ind]   = tbarCand.E();
             }
+            */
+            
+            top_mass = bestMassTop;
+            if (bestMassTop > 0.)
+            {
+                top_pt  = topCand.P();
+                top_eta = topCand.Eta();
+                top_phi = topCand.Phi();
+                top_e   = topCand.E();
+            }
         }
 
-        if (!(top1_mass > 0 && top2_mass > 0)) continue;
+        //if (!(top1_mass > 0 && top2_mass > 0)) continue;
+        if (top_mass < 0) continue;
 
         outTree.Fill();
     }
