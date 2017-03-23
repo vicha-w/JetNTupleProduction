@@ -763,6 +763,10 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                 top_eta = topCand.Eta();
                 top_phi = topCand.Phi();
                 top_e   = topCand.E();
+                tbar_pt  = tbarCand.P();
+                tbar_eta = tbarCand.Eta();
+                tbar_phi = tbarCand.Phi();
+                tbar_e   = tbarCand.E();
             }
         }
 
