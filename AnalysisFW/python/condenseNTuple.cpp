@@ -176,6 +176,8 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
         bool lepton1filled = false;
         bool lepton2filled = false;
 
+        int useJetInd[2] = {-1, -1};
+
         for (int j = 0; j < njet; j++)
         {
             if (jet_bTag[j] < bTagDiscrimLevel) continue;
@@ -188,6 +190,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                 jet1_bTag = jet_bTag[j];
 
                 jet1filled = true;
+                useJetInd[0] = j;
             }
             else
             {
@@ -200,6 +203,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                     jet2_bTag = jet1_bTag;
 
                     jet2filled = true;
+                    useJetInd[1] = useJetInd[0];
 
                     jet1_pt = jet_pt[j];
                     jet1_eta = jet_eta[j];
@@ -208,6 +212,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                     jet1_bTag = jet_bTag[j];
 
                     jet1filled = true;
+                    useJetInd[0] = j;
                 }
                 else if (!jet2filled)
                 {
@@ -218,6 +223,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                     jet2_bTag = jet_bTag[j];
 
                     jet2filled = true;
+                    useJetInd[1] = j;
                 }
                 else if (jet_pt[j] > jet2_pt)
                 {
@@ -228,12 +234,15 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                     jet2_bTag = jet_bTag[j];
 
                     jet2filled = true;
+                    useJetInd[1] = j;
                 }
             }
         }
 
         if (!(jet1filled && jet2filled)) for (int j = 0; j < njet; j++)
         {
+            if (j == useJetInd[0] || j == useJetInd[1]) continue;
+
             if (!jet1filled)
             {
                 jet1_pt = jet_pt[j];
@@ -243,6 +252,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                 jet1_bTag = jet_bTag[j];
 
                 jet1filled = true;
+                useJetInd[0] = j;
             }
             else
             {
@@ -255,6 +265,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                     jet2_bTag = jet1_bTag;
 
                     jet2filled = true;
+                    useJetInd[1] = useJetInd[0];
 
                     jet1_pt = jet_pt[j];
                     jet1_eta = jet_eta[j];
@@ -263,6 +274,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                     jet1_bTag = jet_bTag[j];
 
                     jet1filled = true;
+                    useJetInd[0] = j;
                 }
                 else if (!jet2filled)
                 {
@@ -273,6 +285,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                     jet2_bTag = jet_bTag[j];
 
                     jet2filled = true;
+                    useJetInd[1] = j;
                 }
                 else if (jet_pt[j] > jet2_pt)
                 {
@@ -283,6 +296,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                     jet2_bTag = jet_bTag[j];
 
                     jet2filled = true;
+                    useJetInd[1] = j;
                 }
             }
         }
@@ -657,9 +671,17 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
 					double WLeptonRatio1 = ((pnu + leptonPVect).M())/massW;
 					double WLeptonRatio2 = ((pnubar + leptonMVect).M())/massW;
 
-					if (bestDelta < 0. || Delta < bestDelta)
+                    TLorentzVector topVect, tbarVect;
+                    topVect = leptonPVect + jetb + pnu;
+                    tbarVect = leptonMVect + jetbbar + pnubar;
+
+                    DeltaTop = TMath::Abs(massTop - topVect.M());
+                    DeltaTop = TMath::Abs(massTop - tbarVect.M()) > DeltaTop ? TMath::Abs(massTop - tbarVect.M()) : DeltaTop;
+
+					if (bestDelta < 0. || Delta*DeltaTop < bestDelta*bestDeltaTop)
 					{
 						bestDelta = Delta;
+                        bestDeltaTop = DeltaTop;
 						bestMassTop = massTop;
 						deltaRBestMassTop1 = leptonPVect.DeltaR(pnu);
 						deltaRBestMassTop2 = leptonMVect.DeltaR(pnubar);
@@ -692,6 +714,8 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
 
     outFile.cd();
     outTree.Write();
+    printf("All entries in file: %lld\n",nentries);
+    printf("Valid entries with opposite charge leptons: %d\n", validLEntries);
     printf("Output tree contains %lld events.\n",outTree.GetEntries());
     //outFile.Close();
     //file->Close();
