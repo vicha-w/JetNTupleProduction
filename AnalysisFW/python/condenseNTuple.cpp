@@ -181,7 +181,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
         bool lepton1filled = false;
         bool lepton2filled = false;
 
-        int useJetInd[2] = {-1, -1};
+        int chooseJetInd[2] = {-1, -1};
 
         for (int j = 0; j < njet; j++)
         {
@@ -195,7 +195,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                 jet1_bTag = jet_bTag[j];
 
                 jet1filled = true;
-                useJetInd[0] = j;
+                chooseJetInd[0] = j;
             }
             else
             {
@@ -208,7 +208,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                     jet2_bTag = jet1_bTag;
 
                     jet2filled = true;
-                    useJetInd[1] = useJetInd[0];
+                    chooseJetInd[1] = chooseJetInd[0];
 
                     jet1_pt = jet_pt[j];
                     jet1_eta = jet_eta[j];
@@ -217,7 +217,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                     jet1_bTag = jet_bTag[j];
 
                     jet1filled = true;
-                    useJetInd[0] = j;
+                    chooseJetInd[0] = j;
                 }
                 else if (!jet2filled)
                 {
@@ -228,7 +228,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                     jet2_bTag = jet_bTag[j];
 
                     jet2filled = true;
-                    useJetInd[1] = j;
+                    chooseJetInd[1] = j;
                 }
                 else if (jet_pt[j] > jet2_pt)
                 {
@@ -239,14 +239,14 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                     jet2_bTag = jet_bTag[j];
 
                     jet2filled = true;
-                    useJetInd[1] = j;
+                    chooseJetInd[1] = j;
                 }
             }
         }
 
         if (!(jet1filled && jet2filled)) for (int j = 0; j < njet; j++)
         {
-            if (j == useJetInd[0] || j == useJetInd[1]) continue;
+            if (j == chooseJetInd[0] || j == chooseJetInd[1]) continue;
 
             if (!jet1filled)
             {
@@ -257,7 +257,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                 jet1_bTag = jet_bTag[j];
 
                 jet1filled = true;
-                useJetInd[0] = j;
+                chooseJetInd[0] = j;
             }
             else
             {
@@ -270,7 +270,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                     jet2_bTag = jet1_bTag;
 
                     jet2filled = true;
-                    useJetInd[1] = useJetInd[0];
+                    chooseJetInd[1] = chooseJetInd[0];
 
                     jet1_pt = jet_pt[j];
                     jet1_eta = jet_eta[j];
@@ -279,7 +279,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                     jet1_bTag = jet_bTag[j];
 
                     jet1filled = true;
-                    useJetInd[0] = j;
+                    chooseJetInd[0] = j;
                 }
                 else if (!jet2filled)
                 {
@@ -290,7 +290,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                     jet2_bTag = jet_bTag[j];
 
                     jet2filled = true;
-                    useJetInd[1] = j;
+                    chooseJetInd[1] = j;
                 }
                 else if (jet_pt[j] > jet2_pt)
                 {
@@ -301,7 +301,7 @@ void condenseNTuple(const char* fileName, const char* treeName="ak5ak7/OpenDataT
                     jet2_bTag = jet_bTag[j];
 
                     jet2filled = true;
-                    useJetInd[1] = j;
+                    chooseJetInd[1] = j;
                 }
             }
         }
