@@ -1,7 +1,5 @@
 # Hi there
-This GitHub repo is forked from the official CMS 2011 OpenData Validation by @tamshai et al, and will be further modified for my bachelor's thesis. This README.md is not final yet, so stay tuned for changes.
-
-The following text is taken directly from the forked repo.
+This GitHub repo is forked from the official CMS 2011 OpenData Validation by @tamshai et al, and will be further modified for my bachelor's thesis. Now my bachelor's thesis is finally finished, I will keep updating this README to better reflect the files in this repo.
 
 All the best,
 
@@ -9,61 +7,70 @@ VW
 
 ---
 
-# CMS Jet Tuple production 2011
-
-
+# Simple (?) Jet Tuple production 2011
 
 This project is a CMSSW module producing flat tuples from 2011A Jet data.
 
-Source code was originally forked from the SMPJ Analysis Framework: 
-https://twiki.cern.ch/twiki/bin/viewauth/CMS/SMPJAnalysisFW  
-https://github.com/cms-smpj/SMPJ/tree/v1.0/
+Source code was originally forked from the official CMS 2011 OpenData Validation by @tamshai et al:
+https://github.com/tamshai/cms-opendata-validation/
 
-The instruction assume that you will work on a VM properly contextualized for CMS, available from http://opendata.cern.ch/VM/CMS.
+The scripts in this repo has been modified in order to support both VM distributed on CERN OpenData portal, available on http://opendata.cern.ch/VM/CMS, as well as lxplus.
 
 ## Creating the working area
 
 First setup your own git configuration, or alternatively use these dummy values (required by the command ```git cms-addpkg```): 
+
 ```
 git config --global user.name 'Your Name'
 git config --global user.email 'your@ema.il'
 git config --global user.github 'username'
-
 ```
 
 Next create the working area:
 ```
-mkdir WorkingArea
+mkdir WorkingArea # make another directory
 cd ./WorkingArea
-cmsrel CMSSW_5_3_32
+cmsrel CMSSW_5_3_32 # checkout CMSSW 5_3_32
 cd ./CMSSW_5_3_32/src
+
+# initialise CMSSW environment
 cmsenv
 git cms-addpkg PhysicsTools/PatAlgos
-git clone https://github.com/tamshai/cms-opendata-2011-jets/
-cp cms-opendata-2011-jets/jetProducer_cfi.py PhysicsTools/PatAlgos/python/producersLayer1/
+
+# clone this repo
+git clone https://github.com/vicha-w/JetNTupleProduction
+cp JetNTupleProduction/jetProducer_cfi.py PhysicsTools/PatAlgos/python/producersLayer1/
+
+# compile everything
 scram b
-cd cms-opendata-2011-jets/AnalysisFW/python/
+
+# move to our working directory
+cd JetNTupleProduction/AnalysisFW/python/
 
 ```
 
 ## Setting up additional files
 
-With `cms-opendata-2011-jets/AnalysisFW/python/` as the current folder, run the following commands:
+With `JetNTupleProduction/AnalysisFW/python/` as the current folder, run the following commands:
 
-1. Download index files : 
+1. Download index files. Here you may download any index files from CERN OpenData portal, such as these two index files : 
     
     ```
+    # Primary dataset
     wget http://opendata.cern.ch/record/21/files/CMS_Run2011A_Jet_AOD_12Oct2013-v1_20000_file_index.txt
+
+    # MC dataset
     wget http://opendata.cern.ch/record/1562/files/CMS_MonteCarlo2011_Summer11LegDR_QCD_Pt-80to120_TuneZ2_7TeV_pythia6_AODSIM_PU_S13_START53_LV6-v1_00000_file_index.txt 
     ```
-    
-2. Download JSON of good runs:
+    You can choose any index files from OpenData by substituing the above URLs with the URL of your index file of your choice.
+
+2. Download JSON of good runs. This JSON file is required when you need to analyse data from 2011 primary dataset:
 
     ```
     wget http://opendata.cern.ch/record/1001/files/Cert_160404-180252_7TeV_ReRecoNov08_Collisions11_JSON.txt
     ```
     
-3. Create links to the condition databases:
+3. **(Optional for VM)** Create links to the condition databases:
 
     ```
     ln -sf /cvmfs/cms-opendata-conddb.cern.ch/FT_53_LV5_AN1_RUNA FT_53_LV5_AN1 
@@ -72,7 +79,15 @@ With `cms-opendata-2011-jets/AnalysisFW/python/` as the current folder, run the 
     ln -sf /cvmfs/cms-opendata-conddb.cern.ch/START53_LV6A1 START53_LV6A1
     ln -sf /cvmfs/cms-opendata-conddb.cern.ch/START53_LV6A1.db START53_LV6A1.db
     ```
+
+4. Breakdown downloaded index files using provided custom script. Each downloaded index file can contain hundreds of links to actual file on the database. In case you want maximum number of events, you should break down index files into many files containing just one link to actual file on the database. The python script just for the task is `indexFragmenter.py`.
+
+    ```
+    python indexFragmenter.py <YOUR INDEX FILE HERE>
+    ```
     
+    The output index file will have a name ending in `<NUMBER>_fragment.txt`.
+
 ## Run the program:
 To create tuples from data run the following command:
 
@@ -85,6 +100,25 @@ This command creates tuples from Monte Carlo simulations:
 ```
     cmsRun OpenDataTreeProducer_mcPAT_2011_cfg.py
 ```
+
+To create tuples from data or Mote Carlo simulations, modify `OpenDataCheckout.py` script.
+
+```
+    isMC = True # MC or data
+    customGlobalTag = 'START53_LV6::All'
+    customIndexFile = 'OpenIndex/DY/DYJetsToLL_M-10To50_TuneZ2_7TeV-pythia6_00000_1_fragment.txt'
+    customOutFileName = 'OpenTuple/DYJetsToLL_M-10To50_TuneZ2_7TeV-pythia6_00000_1_test_fragment.root'
+    customBTagDiscrim = 'combinedSecondaryVertexBJetTags'
+
+    numberOfEvents = 50
+```
+
+* `isMC`: Boolean value. `True` if the following dataset is MC. `False` if the following dataset is primary dataset.
+* `customGlobalTag`: String. If unspecified, default GlobalTag is used according to `isMC` value. (`START53_LV6A1::All` if `isMC` is `True`, and `FT_53_LV5_AN1::All` if `isMC` is `False`.)
+* `customIndexFile`: String. If unspecified, `CMS_Run2011A_Jet_AOD_12Oct2013-v1_20000_file_index.txt`.
+* `customOutFileName`: String. If unspecified, `OpenDataTree_mc.root` or `OpenDataTree_data.root`.
+* `customBTagDiscrim`: String - b-tagging discriminator scheme. **Required.**
+* `numberOfEvents`: Integer. Enter `-1` to run all events from every file linked from the index file. (`indexFragmenter.py` can help here!)
  
 After running the code, you can browse the tuples by opening the produced files in ROOT:
 
