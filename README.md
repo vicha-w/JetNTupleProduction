@@ -111,8 +111,8 @@ numberOfEvents = 50
 After running the code, you can browse the tuples by initialising `TBrowser`, ROOT's default GUI tree browser, in ROOT:
 
 ```bash
-    root -l
-    root [] TBrowser bowser
+root -l
+root [] TBrowser bowser
 ```
 
 ## Simple list of tuple variables
@@ -156,3 +156,21 @@ After running the code, you can browse the tuples by initialising `TBrowser`, RO
 ```
 
 * All variables starting with `b_` are values originally available from database before cuts.
+
+## Condensing tuple file
+
+In order to condense the tuple file into machine-learning-friendly format, you can "condense" the tuple file by using C++ script `condenseNTuple.cpp` with ROOT. To execute, simply call:
+
+```bash
+root -l -q "condenseNTuple.cpp(\"<YOUR TUPLE FILE HERE>\")"
+```
+
+Option `-l` suppresses splash screen, and `-q` quits ROOT after finished executing the script. These two options can be ideal when you have lots of tuple files to work with, by simply writing bash script such as the following:
+
+```bash
+for file in *.root;
+    do root -l -q "condenseNTuple.cpp(\"$file\")";
+    done
+```
+
+As per usual, you can freely modify every line of code here. Tips and comments are appreciated! ;-)
