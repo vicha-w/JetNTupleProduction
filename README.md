@@ -1,5 +1,5 @@
 # Hi there
-This GitHub repo is forked from the official CMS 2011 OpenData Validation by @tamshai et al, and will be further modified for my bachelor's thesis. Now my bachelor's thesis is finally finished, I will keep updating this README to better reflect the files in this repo.
+This GitHub repo is forked from the official CMS 2011 OpenData Validation by @tamshai et al, and is modified for my bachelor's thesis. Now my bachelor's thesis is finally finished, I will keep updating this README to better reflect the files in this repo.
 
 All the best,
 
@@ -120,42 +120,46 @@ root [] TBrowser bowser
 * Jets reconstructed using the anti-kT algorithm with a parameter R = 0.5 (short. AK5).
 
 ```cpp
-    int     njet;                     // Number of AK5 jets
-    float   jet_pt[njet];             // Corrected transverse momentum
-    float   jet_eta[njet];            // Pseudorapidity
-    float   jet_phi[njet];            // Azimuthal angle
-    float   jet_btag[njet];           // b-tagging discriminator value
-    float   jet_E[njet];              // Energy
+int     njet;                     // Number of AK5 jets
+float   jet_pt[njet];             // Corrected transverse momentum
+float   jet_eta[njet];            // Pseudorapidity
+float   jet_phi[njet];            // Azimuthal angle
+float   jet_btag[njet];           // b-tagging discriminator value
+float   jet_E[njet];              // Energy
 ```
 
 * Missing energy
 ```cpp
-    float   met_et;                   // Transverse energy
-    float   met_phi;                  // Azimuthal angle
-    // No pseudorapidity available for missing energy!
+float   met_et;                   // Transverse energy
+float   met_phi;                  // Azimuthal angle
+// No pseudorapidity available from missing energy!
 ```
 
 * Muons from tight muon criteria https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMuonId#The2011Data
 ```cpp
-    int     nmu;                      // Number of muons
-    float   muon_pt[njet];            // Corrected transverse momentum
-    float   muon_eta[njet];           // Pseudorapidity
-    float   muon_phi[njet];           // Azimuthal angle
-    float   muon_E[njet];             // Energy
-    float   muon_charge[njet];        // Charge
+int     nmu;                      // Number of muons
+float   muon_pt[njet];            // Corrected transverse momentum
+float   muon_eta[njet];           // Pseudorapidity
+float   muon_phi[njet];           // Azimuthal angle
+float   muon_E[njet];             // Energy
+float   muon_charge[njet];        // Charge
 ```
 
 * Electrons from loose electron criteria (See https://arxiv.org/abs/1208.2671 ref 1 - 5)
 ```cpp
-    int     nele;                     // Number of electrons
-    float   electron_pt[njet];        // Corrected transverse momentum
-    float   electron_eta[njet];       // Pseudorapidity
-    float   electron_phi[njet];       // Azimuthal angle
-    float   electron_E[njet];         // Energy
-    float   electron_charge[njet];    // Charge
+int     nele;                     // Number of electrons
+float   electron_pt[njet];        // Corrected transverse momentum
+float   electron_eta[njet];       // Pseudorapidity
+float   electron_phi[njet];       // Azimuthal angle
+float   electron_E[njet];         // Energy
+float   electron_charge[njet];    // Charge
 ```
 
 * All variables starting with `b_` are values originally available from database before cuts.
+
+## Bash script to run cmsRun through multiple index files
+
+In this repo, two bash scripts are added, named `loopOpenIndex.sh` and `loopOpenIndex.mc.sh`. These two scripts are designed to help you execute cmsRun through multiple fragmented index files (made by `indexFragmenter.py`) easily, without manually modifying `OpenDataCheckout.py` every single time. Before using the scripts, you may store the fragmented index files that came from the same original index file in the same folder.
 
 ## Condensing tuple file
 
