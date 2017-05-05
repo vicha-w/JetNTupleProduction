@@ -70,7 +70,7 @@ With `JetNTupleProduction/AnalysisFW/python/` as the current folder, run the fol
     wget http://opendata.cern.ch/record/1001/files/Cert_160404-180252_7TeV_ReRecoNov08_Collisions11_JSON.txt
     ```
     
-3. **(Optional for VM)** Create links to the condition databases:
+3. **(VM only)** Create links to the condition databases:
 
     ```bash
     ln -sf /cvmfs/cms-opendata-conddb.cern.ch/FT_53_LV5_AN1_RUNA FT_53_LV5_AN1 
@@ -80,7 +80,7 @@ With `JetNTupleProduction/AnalysisFW/python/` as the current folder, run the fol
     ln -sf /cvmfs/cms-opendata-conddb.cern.ch/START53_LV6A1.db START53_LV6A1.db
     ```
 
-4. Breakdown downloaded index files using provided custom script. Each downloaded index file can contain hundreds of links to actual file on the database. In case you want maximum number of events, you should break down index files into many files containing just one link to actual file on the database. The python script just for the task is `indexFragmenter.py`.
+4. Breakdown downloaded index files using provided custom script. Each downloaded index file can contain hundreds of links to actual file on the database. If you request a finite number of events from each index file, fine, you can go ahead and use that index file you downloaded. However, if you want a maximum number of events from one index file, it could take literally a very long time, since some index files can contain millions of events. In case you want a maximum number of events, you should break down index files into many files, each containing just one link to actual file on the database. This will allow you to keep track of database files more easily. The python script just for the task is `indexFragmenter.py`.
 
     ```bash
     python indexFragmenter.py <YOUR INDEX FILE HERE>
