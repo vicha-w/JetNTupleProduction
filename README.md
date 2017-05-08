@@ -99,6 +99,8 @@ customOutFileName = 'OpenTuple/DYJetsToLL_M-10To50_TuneZ2_7TeV-pythia6_00000_1_t
 customBTagDiscrim = 'combinedSecondaryVertexBJetTags'
 
 numberOfEvents = 50
+
+runOnVM = False
 ```
 
 * `isMC`: Boolean value. `True` if the following dataset is MC. `False` if the following dataset is primary dataset.
@@ -107,6 +109,7 @@ numberOfEvents = 50
 * `customOutFileName`: String. If unspecified, `OpenDataTree_mc.root` or `OpenDataTree_data.root`.
 * `customBTagDiscrim`: String - b-tagging discriminator scheme. **Required.**
 * `numberOfEvents`: Integer. Enter `-1` to run all events from every file linked from the index file. (`indexFragmenter.py` can help here!)
+* `runOnVM`: Boolean. `True` if the code will be run on OpenData virtual machine. `False` if the code will be run on lxplus.
  
 After running the code, you can browse the tuples by initialising `TBrowser`, ROOT's default GUI tree browser, in ROOT:
 
