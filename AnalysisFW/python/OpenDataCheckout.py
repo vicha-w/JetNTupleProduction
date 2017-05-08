@@ -12,16 +12,16 @@ customBTagDiscrim = 'combinedSecondaryVertexBJetTags'
 
 numberOfEvents = 50
 
+# True : when running in OpenData virtual machine
+# False: when runing in lxplus 
+runOnVM = False
+
 ## Import skeleton process
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 import FWCore.Utilities.FileUtils as FileUtils
 
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
-
-# True : when running in OpenData virtual machine
-# False: when runing in lxplus 
-runOnVM = False
 
 # Index of data files
 if customIndexFile != '' and type(customIndexFile) == str:
